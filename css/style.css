@@ -1424,7 +1424,6 @@ button {
     border: 0 !important;
 }
 
-
 /* =========================================================
    18. FOOTER
    ========================================================= */
@@ -1433,7 +1432,8 @@ button {
     position: relative;
     z-index: 2;
 
-    padding: 70px 0 30px;
+    margin-top: 20px;
+    padding: 75px 0 30px;
 
     border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -1443,23 +1443,31 @@ button {
     margin: 0 auto;
 
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: 1.4fr 0.8fr 1fr;
 
-    gap: 60px;
+    gap: 70px;
+
+    align-items: start;
 }
 
+/* Remove qualquer logo dentro do rodapé */
 .footer-brand img {
-    width: 82px;
-    margin-bottom: 20px;
+    display: none;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .footer-brand p {
-    max-width: 330px;
+    max-width: 360px;
 
     color: #626d7d;
 
     font-size: 0.78rem;
-    line-height: 1.7;
+    line-height: 1.75;
 }
 
 .footer-column h4 {
@@ -1476,7 +1484,7 @@ button {
 
 .footer-links {
     display: grid;
-    gap: 10px;
+    gap: 11px;
 }
 
 .footer-links a {
@@ -1495,7 +1503,7 @@ button {
 
 .footer-contact {
     display: grid;
-    gap: 10px;
+    gap: 11px;
 }
 
 .footer-contact a,
@@ -1503,6 +1511,8 @@ button {
     color: #626d7d;
 
     font-size: 0.78rem;
+
+    line-height: 1.5;
 }
 
 .footer-contact a:hover {
@@ -1511,7 +1521,7 @@ button {
 
 .footer-bottom {
     width: min(1180px, calc(100% - 48px));
-    margin: 60px auto 0;
+    margin: 55px auto 0;
 
     padding-top: 25px;
 
@@ -1526,6 +1536,10 @@ button {
     color: #414a58;
 
     font-size: 0.68rem;
+}
+
+.footer-bottom p {
+    margin: 0;
 }
 
 
@@ -1628,40 +1642,10 @@ textarea:focus-visible {
 
 @media (max-width: 1024px) {
 
-    .hero-grid {
-        grid-template-columns: 1fr;
-
-        gap: 70px;
-    }
-
-    .hero-content {
-        max-width: 800px;
-    }
-
-    .hero-visual {
-        max-width: 600px;
-
-        margin: 0 auto;
-    }
-
-    .about-content {
-        grid-template-columns: 1fr;
-
-        gap: 45px;
-    }
-
-    .contact-content {
-        grid-template-columns: 1fr;
-
-        gap: 45px;
-    }
-
-    .benefits-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .footer-content {
         grid-template-columns: 1fr 1fr;
+
+        gap: 45px;
     }
 
     .footer-brand {
@@ -1671,151 +1655,25 @@ textarea:focus-visible {
 
 
 /* =========================================================
-   23. MOBILE NAV
+   23. MOBILE
    ========================================================= */
 
 @media (max-width: 768px) {
 
-    .header-content {
-        min-height: 70px;
-    }
-
-    .logo img {
-        width: 72px;
-    }
-
-    .menu-toggle {
-        position: relative;
-
-        display: flex;
-    }
-
-    .nav {
-        position: absolute;
-
-        top: 70px;
-        left: 16px;
-        right: 16px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-
-        gap: 0;
-
-        padding: 10px;
-
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
-
-        background:
-            rgba(7, 10, 16, 0.98);
-
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-
-        opacity: 0;
-        visibility: hidden;
-
-        transform: translateY(-10px);
-
-        transition:
-            opacity 0.25s ease,
-            visibility 0.25s ease,
-            transform 0.25s ease;
-    }
-
-    .nav.active {
-        opacity: 1;
-        visibility: visible;
-
-        transform: translateY(0);
-    }
-
-    .nav a {
-        padding: 13px 15px;
-
-        border-radius: 6px;
-    }
-
-    .nav a:hover {
-        background: rgba(0, 85, 255, 0.06);
-    }
-
-    .nav a::after {
-        display: none;
-    }
-
-    .hero {
-        padding-top: 125px;
-    }
-
-    .hero-grid {
-        width: min(100% - 36px, 700px);
-    }
-
-    .section {
-        padding: 90px 0;
-    }
-
-    .section-heading {
+    .footer-content {
         width: min(100% - 36px, 700px);
 
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
 
-        gap: 10px;
-
-        margin-bottom: 45px;
+        gap: 40px;
     }
 
-    .services-grid,
-    .portfolio-grid,
-    .benefits-grid {
-        width: min(100% - 36px, 700px);
+    .footer-brand {
+        grid-column: span 2;
     }
 
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .portfolio-card.portfolio-large {
-        grid-column: span 1;
-    }
-
-    .benefits-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .timeline {
-        width: min(100% - 36px, 700px);
-    }
-
-    .about-content,
-    .contact-content {
-        width: min(100% - 36px, 700px);
-    }
-
-    .contact-form-wrapper {
-        padding: 25px;
-    }
-
-    .footer-content,
     .footer-bottom {
         width: min(100% - 36px, 700px);
-    }
-
-    .tech-grid {
-        width: min(100% - 36px, 700px);
-
-        flex-wrap: wrap;
-
-        justify-content: center;
-
-        gap: 20px 35px;
     }
 }
 
@@ -1826,109 +1684,9 @@ textarea:focus-visible {
 
 @media (max-width: 480px) {
 
-    .container {
-        width: calc(100% - 32px);
-    }
-
-    .hero {
-        padding-top: 110px;
-        padding-bottom: 75px;
-    }
-
-    .hero-grid,
-    .section-heading,
-    .services-grid,
-    .portfolio-grid,
-    .benefits-grid,
-    .about-content,
-    .contact-content,
-    .timeline,
-    .tech-grid,
-    .footer-content,
-    .footer-bottom {
-        width: calc(100% - 32px);
-    }
-
-    .hero h1 {
-        font-size: clamp(2.65rem, 13vw, 4rem);
-    }
-
-    .hero-description {
-        font-size: 0.88rem;
-    }
-
-    .hero-actions {
-        flex-direction: column;
-    }
-
-    .hero-actions .btn {
-        width: 100%;
-    }
-
-    .hero-visual::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .mockup-card {
-        padding: 18px;
-    }
-
-    .section {
-        padding: 75px 0;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .service-card {
-        min-height: auto;
-
-        padding: 28px;
-    }
-
-    .portfolio-image,
-    .portfolio-large .portfolio-image {
-        min-height: 220px;
-    }
-
-    .portfolio-info {
-        padding: 22px;
-    }
-
-    .benefit-item {
-        min-height: auto;
-
-        padding: 28px;
-    }
-
-    .benefit-number {
-        margin-bottom: 28px;
-    }
-
-    .timeline-item {
-        gap: 20px;
-    }
-
-    .timeline::before {
-        left: 20px;
-    }
-
-    .timeline-item > span {
-        width: 41px;
-        height: 41px;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .contact-form-wrapper {
-        padding: 20px;
-    }
-
     .footer-content {
+        width: calc(100% - 32px);
+
         grid-template-columns: 1fr;
 
         gap: 35px;
@@ -1939,8 +1697,12 @@ textarea:focus-visible {
     }
 
     .footer-bottom {
+        width: calc(100% - 32px);
+
         flex-direction: column;
         align-items: flex-start;
+
+        gap: 8px;
 
         margin-top: 40px;
     }
