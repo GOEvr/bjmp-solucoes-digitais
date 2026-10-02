@@ -19,13 +19,45 @@ const CONTACT_ENDPOINT = '/api/contact.php';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    initLoader();
     initHeader();
     initMobileMenu();
     initSmoothScroll();
     initRevealAnimation();
     initContactForm();
+    initMouseGlow();
+    initParticles();
 
 });
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+function initLoader() {
+
+    const loader = document.getElementById('loader');
+
+    if (!loader) {
+        return;
+    }
+
+    window.addEventListener('load', () => {
+
+        window.setTimeout(() => {
+
+            loader.classList.add('loaded');
+
+            window.setTimeout(() => {
+                loader.remove();
+            }, 700);
+
+        }, 250);
+
+    });
+
+}
 
 
 /* =========================================================
@@ -34,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initHeader() {
 
-    const header = document.querySelector('header');
+    const header = document.getElementById('header');
 
     if (!header) {
         return;
@@ -59,6 +91,7 @@ function initHeader() {
             passive: true
         }
     );
+
 }
 
 
@@ -68,12 +101,16 @@ function initHeader() {
 
 function initMobileMenu() {
 
-    const toggle = document.querySelector('.menu-toggle');
-    const menu = document.querySelector('.nav-menu');
+    const toggle =
+        document.getElementById('menuToggle');
+
+    const menu =
+        document.getElementById('mainNav');
 
     if (!toggle || !menu) {
         return;
     }
+
 
     toggle.addEventListener('click', () => {
 
@@ -90,6 +127,13 @@ function initMobileMenu() {
             String(isOpen)
         );
 
+        toggle.setAttribute(
+            'aria-label',
+            isOpen
+                ? 'Fechar menu'
+                : 'Abrir menu'
+        );
+
     });
 
 
@@ -104,13 +148,9 @@ function initMobileMenu() {
 
         link.addEventListener('click', () => {
 
-            toggle.classList.remove('active');
-
-            menu.classList.remove('active');
-
-            toggle.setAttribute(
-                'aria-expanded',
-                'false'
+            closeMobileMenu(
+                toggle,
+                menu
             );
 
         });
@@ -119,7 +159,7 @@ function initMobileMenu() {
 
 
     /*
-     * Fecha ao pressionar ESC.
+     * Fecha com ESC.
      */
 
     document.addEventListener(
@@ -131,18 +171,68 @@ function initMobileMenu() {
                 menu.classList.contains('active')
             ) {
 
-                toggle.classList.remove('active');
-
-                menu.classList.remove('active');
-
-                toggle.setAttribute(
-                    'aria-expanded',
-                    'false'
+                closeMobileMenu(
+                    toggle,
+                    menu
                 );
+
+                toggle.focus();
+
             }
 
         }
     );
+
+
+    /*
+     * Fecha se o usuário aumentar
+     * a janela para desktop.
+     */
+
+    window.addEventListener(
+        'resize',
+        () => {
+
+            if (
+                window.innerWidth > 768 &&
+                menu.classList.contains('active')
+            ) {
+
+                closeMobileMenu(
+                    toggle,
+                    menu
+                );
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
+}
+
+
+function closeMobileMenu(
+    toggle,
+    menu
+) {
+
+    toggle.classList.remove('active');
+
+    menu.classList.remove('active');
+
+    toggle.setAttribute(
+        'aria-expanded',
+        'false'
+    );
+
+    toggle.setAttribute(
+        'aria-label',
+        'Abrir menu'
+    );
+
 }
 
 
@@ -173,10 +263,18 @@ function initSmoothScroll() {
                     return;
                 }
 
-                const target =
-                    document.querySelector(
-                        targetId
-                    );
+                let target = null;
+
+                try {
+
+                    target =
+                        document.querySelector(
+                            targetId
+                        );
+
+                } catch {
+                    return;
+                }
 
                 if (!target) {
                     return;
@@ -185,7 +283,10 @@ function initSmoothScroll() {
                 event.preventDefault();
 
                 target.scrollIntoView({
-                    behavior: 'smooth',
+                    behavior:
+                        prefersReducedMotion()
+                            ? 'auto'
+                            : 'smooth',
                     block: 'start'
                 });
 
@@ -193,25 +294,47 @@ function initSmoothScroll() {
         );
 
     });
+
 }
 
 
 /* =========================================================
-   REVEAL
+   REVEAL / FADE-UP
 ========================================================= */
 
 function initRevealAnimation() {
 
     const elements =
-        document.querySelectorAll('.reveal');
+        document.querySelectorAll(
+            '.fade-up'
+        );
 
     if (!elements.length) {
         return;
     }
 
+
     /*
-     * Se o navegador não oferecer IntersectionObserver,
-     * mostramos os elementos normalmente.
+     * Usuário prefere reduzir animações.
+     */
+
+    if (prefersReducedMotion()) {
+
+        elements.forEach(element => {
+
+            element.classList.add(
+                'visible'
+            );
+
+        });
+
+        return;
+    }
+
+
+    /*
+     * Fallback para navegadores
+     * sem IntersectionObserver.
      */
 
     if (
@@ -219,7 +342,11 @@ function initRevealAnimation() {
     ) {
 
         elements.forEach(element => {
-            element.classList.add('visible');
+
+            element.classList.add(
+                'visible'
+            );
+
         });
 
         return;
@@ -248,14 +375,18 @@ function initRevealAnimation() {
 
             },
             {
-                threshold: 0.12
+                threshold: 0.12,
+                rootMargin: '0px 0px -40px 0px'
             }
         );
 
 
     elements.forEach(element => {
+
         observer.observe(element);
+
     });
+
 }
 
 
@@ -266,8 +397,8 @@ function initRevealAnimation() {
 function initContactForm() {
 
     const form =
-        document.querySelector(
-            '#contact-form'
+        document.getElementById(
+            'contactForm'
         );
 
     if (!form) {
@@ -276,14 +407,35 @@ function initContactForm() {
 
 
     const status =
-        form.querySelector(
-            '.form-status'
+        document.getElementById(
+            'formStatus'
         );
 
+
     const submitButton =
-        form.querySelector(
-            'button[type="submit"]'
+        document.getElementById(
+            'submitButton'
         );
+
+
+    /*
+     * Elementos do formulário.
+     */
+
+    const nameInput =
+        document.getElementById('nome');
+
+    const emailInput =
+        document.getElementById('email');
+
+    const phoneInput =
+        document.getElementById('telefone');
+
+    const messageInput =
+        document.getElementById('mensagem');
+
+    const honeypot =
+        document.getElementById('website');
 
 
     form.addEventListener(
@@ -308,23 +460,16 @@ function initContactForm() {
 
 
             /*
-             * Honeypot.
+             * Honeypot anti-spam.
+             *
+             * Não informamos ao visitante
+             * que o mecanismo foi acionado.
              */
-
-            const honeypot =
-                form.querySelector(
-                    'input[name="website"]'
-                );
 
             if (
                 honeypot &&
                 honeypot.value.trim() !== ''
             ) {
-
-                /*
-                 * Não informamos ao usuário
-                 * que ele acionou o honeypot.
-                 */
 
                 showFormStatus(
                     status,
@@ -339,39 +484,35 @@ function initContactForm() {
 
 
             /*
-             * Captura dos dados.
+             * Captura e normalização.
              */
 
-            const formData =
-                new FormData(form);
-
-
             const name =
-                String(
-                    formData.get('name') || ''
-                ).trim();
+                normalizeInput(
+                    nameInput?.value
+                );
 
             const email =
-                String(
-                    formData.get('email') || ''
-                ).trim();
+                normalizeInput(
+                    emailInput?.value
+                );
 
             const phone =
-                String(
-                    formData.get('phone') || ''
-                ).trim();
+                normalizeInput(
+                    phoneInput?.value
+                );
 
             const message =
-                String(
-                    formData.get('message') || ''
-                ).trim();
+                normalizeInput(
+                    messageInput?.value
+                );
 
 
             /*
              * Validação client-side.
              *
-             * A validação real continuará
-             * obrigatoriamente no servidor.
+             * A validação definitiva deve
+             * permanecer no servidor.
              */
 
             if (!validateName(name)) {
@@ -381,6 +522,8 @@ function initContactForm() {
                     'error',
                     'Informe seu nome.'
                 );
+
+                nameInput?.focus();
 
                 return;
             }
@@ -394,11 +537,15 @@ function initContactForm() {
                     'Informe um e-mail válido.'
                 );
 
+                emailInput?.focus();
+
                 return;
             }
 
 
-            if (phone.length > 30) {
+            if (
+                phone.length > 30
+            ) {
 
                 showFormStatus(
                     status,
@@ -406,20 +553,24 @@ function initContactForm() {
                     'Informe um telefone válido.'
                 );
 
+                phoneInput?.focus();
+
                 return;
             }
 
 
             if (
                 message.length < 10 ||
-                message.length > 3000
+                message.length > 2000
             ) {
 
                 showFormStatus(
                     status,
                     'error',
-                    'A mensagem deve ter entre 10 e 3000 caracteres.'
+                    'A mensagem deve ter entre 10 e 2000 caracteres.'
                 );
+
+                messageInput?.focus();
 
                 return;
             }
@@ -453,23 +604,21 @@ function initContactForm() {
                                     'application/json'
                             },
 
-                            credentials: 'same-origin',
+                            credentials:
+                                'same-origin',
 
-                            body: JSON.stringify({
-                                name,
-                                email,
-                                phone,
-                                message,
+                            body:
+                                JSON.stringify({
+                                    name,
+                                    email,
+                                    phone,
+                                    message,
 
-                                /*
-                                 * Campo honeypot.
-                                 */
-
-                                website:
-                                    honeypot
-                                        ? honeypot.value
-                                        : ''
-                            })
+                                    website:
+                                        honeypot
+                                            ? honeypot.value
+                                            : ''
+                                })
                         }
                     );
 
@@ -486,7 +635,9 @@ function initContactForm() {
                         await response.json();
 
                 } catch {
+
                     result = null;
+
                 }
 
 
@@ -513,14 +664,17 @@ function initContactForm() {
                         result?.message ||
                             'Não foi possível enviar sua mensagem. Tente novamente.'
                     );
+
                 }
 
 
             } catch (error) {
 
                 /*
-                 * Não mostramos detalhes internos
-                 * do erro ao visitante.
+                 * Log apenas no console.
+                 *
+                 * Detalhes internos não são
+                 * exibidos ao visitante.
                  */
 
                 console.error(
@@ -536,16 +690,39 @@ function initContactForm() {
 
             } finally {
 
-                form.dataset.submitting = 'false';
+                form.dataset.submitting =
+                    'false';
 
                 setSubmitState(
                     submitButton,
                     false
                 );
+
             }
 
         }
     );
+
+}
+
+
+/* =========================================================
+   NORMALIZAÇÃO
+========================================================= */
+
+function normalizeInput(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return '';
+    }
+
+    return String(value)
+        .replace(/\u0000/g, '')
+        .trim();
+
 }
 
 
@@ -559,11 +736,16 @@ function validateName(name) {
         return false;
     }
 
+    if (name.length < 2) {
+        return false;
+    }
+
     if (name.length > 100) {
         return false;
     }
 
     return true;
+
 }
 
 
@@ -584,19 +766,20 @@ function validateEmail(email) {
     /*
      * Validação básica para UX.
      *
-     * A validação definitiva é feita
-     * pelo PHP no servidor.
+     * A validação definitiva permanece
+     * no servidor.
      */
 
     const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     return emailPattern.test(email);
+
 }
 
 
 /* =========================================================
-   STATUS
+   STATUS DO FORMULÁRIO
 ========================================================= */
 
 function showFormStatus(
@@ -610,13 +793,12 @@ function showFormStatus(
     }
 
     /*
-     * textContent em vez de innerHTML.
-     *
-     * Isso evita interpretar conteúdo recebido
-     * como HTML.
+     * textContent evita interpretação
+     * de conteúdo como HTML.
      */
 
-    element.textContent = message;
+    element.textContent =
+        String(message);
 
     element.classList.remove(
         'success',
@@ -624,6 +806,7 @@ function showFormStatus(
     );
 
     element.classList.add(type);
+
 }
 
 
@@ -639,11 +822,12 @@ function clearFormStatus(element) {
         'success',
         'error'
     );
+
 }
 
 
 /* =========================================================
-   BOTÃO
+   BOTÃO DE ENVIO
 ========================================================= */
 
 function setSubmitState(
@@ -681,5 +865,286 @@ function setSubmitState(
         button.removeAttribute(
             'aria-busy'
         );
+
     }
+
+}
+
+
+/* =========================================================
+   MOUSE GLOW
+========================================================= */
+
+function initMouseGlow() {
+
+    const glow =
+        document.getElementById(
+            'mouseGlow'
+        );
+
+    if (!glow) {
+        return;
+    }
+
+    /*
+     * Não executa o efeito em dispositivos
+     * sem apontador preciso.
+     */
+
+    if (
+        !window.matchMedia(
+            '(pointer: fine)'
+        ).matches
+    ) {
+        return;
+    }
+
+    if (prefersReducedMotion()) {
+        return;
+    }
+
+
+    let frame = null;
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+
+    document.addEventListener(
+        'mousemove',
+        event => {
+
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+
+            if (frame !== null) {
+                return;
+            }
+
+            frame =
+                window.requestAnimationFrame(
+                    () => {
+
+                        glow.style.transform =
+                            `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+
+                        frame = null;
+
+                    }
+                );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function initParticles() {
+
+    const canvas =
+        document.getElementById(
+            'particles'
+        );
+
+    if (!canvas) {
+        return;
+    }
+
+    if (prefersReducedMotion()) {
+        return;
+    }
+
+
+    const context =
+        canvas.getContext('2d');
+
+    if (!context) {
+        return;
+    }
+
+
+    const particleCount =
+        window.innerWidth < 768
+            ? 25
+            : 45;
+
+
+    const particles = [];
+
+
+    function resizeCanvas() {
+
+        const ratio =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+        canvas.width =
+            Math.floor(
+                window.innerWidth * ratio
+            );
+
+        canvas.height =
+            Math.floor(
+                window.innerHeight * ratio
+            );
+
+        canvas.style.width =
+            `${window.innerWidth}px`;
+
+        canvas.style.height =
+            `${window.innerHeight}px`;
+
+        context.setTransform(
+            ratio,
+            0,
+            0,
+            ratio,
+            0,
+            0
+        );
+
+    }
+
+
+    function createParticle() {
+
+        return {
+            x:
+                Math.random() *
+                window.innerWidth,
+
+            y:
+                Math.random() *
+                window.innerHeight,
+
+            size:
+                Math.random() * 1.4 + 0.4,
+
+            speed:
+                Math.random() * 0.25 + 0.05,
+
+            opacity:
+                Math.random() * 0.35 + 0.05
+        };
+
+    }
+
+
+    function resetParticles() {
+
+        particles.length = 0;
+
+        for (
+            let index = 0;
+            index < particleCount;
+            index++
+        ) {
+
+            particles.push(
+                createParticle()
+            );
+
+        }
+
+    }
+
+
+    function draw() {
+
+        context.clearRect(
+            0,
+            0,
+            window.innerWidth,
+            window.innerHeight
+        );
+
+
+        particles.forEach(
+            particle => {
+
+                particle.y -=
+                    particle.speed;
+
+
+                if (particle.y < -5) {
+
+                    particle.y =
+                        window.innerHeight + 5;
+
+                    particle.x =
+                        Math.random() *
+                        window.innerWidth;
+
+                }
+
+
+                context.beginPath();
+
+                context.arc(
+                    particle.x,
+                    particle.y,
+                    particle.size,
+                    0,
+                    Math.PI * 2
+                );
+
+
+                context.fillStyle =
+                    `rgba(0, 85, 255, ${particle.opacity})`;
+
+                context.fill();
+
+            }
+        );
+
+
+        window.requestAnimationFrame(
+            draw
+        );
+
+    }
+
+
+    resizeCanvas();
+
+    resetParticles();
+
+    draw();
+
+
+    window.addEventListener(
+        'resize',
+        () => {
+
+            resizeCanvas();
+            resetParticles();
+
+        },
+        {
+            passive: true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+function prefersReducedMotion() {
+
+    return window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+    ).matches;
+
 }
