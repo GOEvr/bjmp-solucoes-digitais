@@ -1,434 +1,250 @@
 /* =========================================================
    NAF SOLUÇÕES DIGITAIS
-   SCRIPT.JS
+   script.js
 ========================================================= */
 
-"use strict";
+'use strict';
 
 
 /* =========================================================
-   LOADER
+   CONFIGURAÇÃO
 ========================================================= */
 
-window.addEventListener("load", () => {
+const CONTACT_ENDPOINT = '/api/contact.php';
 
-    const loader = document.getElementById("loader");
 
-    if (!loader) {
+/* =========================================================
+   DOM READY
+========================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    initHeader();
+    initMobileMenu();
+    initSmoothScroll();
+    initRevealAnimation();
+    initContactForm();
+
+});
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+function initHeader() {
+
+    const header = document.querySelector('header');
+
+    if (!header) {
         return;
     }
 
-    setTimeout(() => {
+    const updateHeader = () => {
 
-        loader.classList.add("hidden");
+        if (window.scrollY > 40) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
 
-    }, 700);
+    };
 
-});
+    updateHeader();
+
+    window.addEventListener(
+        'scroll',
+        updateHeader,
+        {
+            passive: true
+        }
+    );
+}
 
 
 /* =========================================================
    MENU MOBILE
 ========================================================= */
 
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
+function initMobileMenu() {
 
-if (menuToggle && mainNav) {
+    const toggle = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('.nav-menu');
 
-    menuToggle.addEventListener("click", () => {
+    if (!toggle || !menu) {
+        return;
+    }
 
-        const isActive =
-            mainNav.classList.toggle("active");
+    toggle.addEventListener('click', () => {
 
-        menuToggle.setAttribute(
-            "aria-expanded",
-            String(isActive)
+        const isOpen =
+            toggle.classList.toggle('active');
+
+        menu.classList.toggle(
+            'active',
+            isOpen
         );
 
-        menuToggle.setAttribute(
-            "aria-label",
-            isActive
-                ? "Fechar menu"
-                : "Abrir menu"
+        toggle.setAttribute(
+            'aria-expanded',
+            String(isOpen)
         );
 
     });
 
 
     /*
-     * Fecha o menu quando o usuário
-     * seleciona um link.
+     * Fecha o menu ao clicar em um link.
      */
 
-    mainNav
-        .querySelectorAll("a")
-        .forEach((link) => {
+    const links =
+        menu.querySelectorAll('a');
 
-            link.addEventListener("click", () => {
+    links.forEach(link => {
 
-                mainNav.classList.remove("active");
+        link.addEventListener('click', () => {
 
-                menuToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
+            toggle.classList.remove('active');
 
-                menuToggle.setAttribute(
-                    "aria-label",
-                    "Abrir menu"
-                );
+            menu.classList.remove('active');
 
-            });
+            toggle.setAttribute(
+                'aria-expanded',
+                'false'
+            );
 
         });
 
+    });
+
+
+    /*
+     * Fecha ao pressionar ESC.
+     */
+
+    document.addEventListener(
+        'keydown',
+        event => {
+
+            if (
+                event.key === 'Escape' &&
+                menu.classList.contains('active')
+            ) {
+
+                toggle.classList.remove('active');
+
+                menu.classList.remove('active');
+
+                toggle.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
+            }
+
+        }
+    );
 }
 
 
 /* =========================================================
-   HEADER AO ROLAR
+   SCROLL SUAVE
 ========================================================= */
 
-const header = document.getElementById("header");
+function initSmoothScroll() {
 
-function updateHeader() {
+    const links =
+        document.querySelectorAll(
+            'a[href^="#"]'
+        );
 
-    if (!header) {
+    links.forEach(link => {
+
+        link.addEventListener(
+            'click',
+            event => {
+
+                const targetId =
+                    link.getAttribute('href');
+
+                if (
+                    !targetId ||
+                    targetId === '#'
+                ) {
+                    return;
+                }
+
+                const target =
+                    document.querySelector(
+                        targetId
+                    );
+
+                if (!target) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+            }
+        );
+
+    });
+}
+
+
+/* =========================================================
+   REVEAL
+========================================================= */
+
+function initRevealAnimation() {
+
+    const elements =
+        document.querySelectorAll('.reveal');
+
+    if (!elements.length) {
         return;
     }
 
-    if (window.scrollY > 60) {
+    /*
+     * Se o navegador não oferecer IntersectionObserver,
+     * mostramos os elementos normalmente.
+     */
 
-        header.classList.add("scrolled");
+    if (
+        !('IntersectionObserver' in window)
+    ) {
 
-    } else {
+        elements.forEach(element => {
+            element.classList.add('visible');
+        });
 
-        header.classList.remove("scrolled");
-
+        return;
     }
 
-}
-
-window.addEventListener(
-    "scroll",
-    updateHeader,
-    {
-        passive: true
-    }
-);
-
-updateHeader();
-
-
-/* =========================================================
-   MOUSE GLOW
-========================================================= */
-
-const mouseGlow =
-    document.getElementById("mouseGlow");
-
-if (mouseGlow) {
-
-    let mouseX = 0;
-    let mouseY = 0;
-
-    let currentX = 0;
-    let currentY = 0;
-
-
-    document.addEventListener(
-        "mousemove",
-        (event) => {
-
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    function animateGlow() {
-
-        currentX +=
-            (mouseX - currentX) * 0.08;
-
-        currentY +=
-            (mouseY - currentY) * 0.08;
-
-        mouseGlow.style.left =
-            `${currentX}px`;
-
-        mouseGlow.style.top =
-            `${currentY}px`;
-
-        requestAnimationFrame(
-            animateGlow
-        );
-
-    }
-
-    animateGlow();
-
-}
-
-
-/* =========================================================
-   PARTÍCULAS
-========================================================= */
-
-const canvas =
-    document.getElementById("particles");
-
-const ctx =
-    canvas
-        ? canvas.getContext("2d")
-        : null;
-
-
-if (canvas && ctx) {
-
-    const particles = [];
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-
-    function resizeCanvas() {
-
-        width = window.innerWidth;
-        height = window.innerHeight;
-
-        const ratio =
-            Math.min(
-                window.devicePixelRatio || 1,
-                2
-            );
-
-        canvas.width =
-            width * ratio;
-
-        canvas.height =
-            height * ratio;
-
-        canvas.style.width =
-            `${width}px`;
-
-        canvas.style.height =
-            `${height}px`;
-
-        ctx.setTransform(
-            ratio,
-            0,
-            0,
-            ratio,
-            0,
-            0
-        );
-
-    }
-
-
-    class Particle {
-
-        constructor() {
-
-            this.x =
-                Math.random() * width;
-
-            this.y =
-                Math.random() * height;
-
-            this.size =
-                Math.random() * 1.4 + 0.3;
-
-            this.speedX =
-                (Math.random() - 0.5) * 0.25;
-
-            this.speedY =
-                (Math.random() - 0.5) * 0.25;
-
-            this.opacity =
-                Math.random() * 0.4 + 0.1;
-
-        }
-
-
-        update() {
-
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-
-            if (this.x < 0) {
-                this.x = width;
-            }
-
-            if (this.x > width) {
-                this.x = 0;
-            }
-
-            if (this.y < 0) {
-                this.y = height;
-            }
-
-            if (this.y > height) {
-                this.y = 0;
-            }
-
-        }
-
-
-        draw() {
-
-            ctx.beginPath();
-
-            ctx.arc(
-                this.x,
-                this.y,
-                this.size,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fillStyle =
-                `rgba(80,130,255,${this.opacity})`;
-
-            ctx.fill();
-
-        }
-
-    }
-
-
-    function createParticles() {
-
-        particles.length = 0;
-
-        /*
-         * Mantém o número de partículas
-         * proporcional ao tamanho da tela.
-         */
-
-        const amount =
-            Math.min(
-                60,
-                Math.max(
-                    25,
-                    Math.floor(
-                        (width * height) / 25000
-                    )
-                )
-            );
-
-
-        for (
-            let i = 0;
-            i < amount;
-            i++
-        ) {
-
-            particles.push(
-                new Particle()
-            );
-
-        }
-
-    }
-
-
-    function animateParticles() {
-
-        ctx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        particles.forEach(
-            (particle) => {
-
-                particle.update();
-                particle.draw();
-
-            }
-        );
-
-
-        requestAnimationFrame(
-            animateParticles
-        );
-
-    }
-
-
-    resizeCanvas();
-    createParticles();
-    animateParticles();
-
-
-    let resizeTimeout;
-
-    window.addEventListener(
-        "resize",
-        () => {
-
-            clearTimeout(
-                resizeTimeout
-            );
-
-            resizeTimeout =
-                setTimeout(() => {
-
-                    resizeCanvas();
-                    createParticles();
-
-                }, 200);
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ANIMAÇÃO DOS ELEMENTOS
-========================================================= */
-
-const animatedElements =
-    document.querySelectorAll(".fade-up");
-
-
-if ("IntersectionObserver" in window) {
 
     const observer =
         new IntersectionObserver(
-            (entries, observerInstance) => {
+            entries => {
 
-                entries.forEach(
-                    (entry) => {
+                entries.forEach(entry => {
 
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            entry.target.classList.add(
-                                "visible"
-                            );
-
-                            observerInstance.unobserve(
-                                entry.target
-                            );
-
-                        }
-
+                    if (!entry.isIntersecting) {
+                        return;
                     }
-                );
+
+                    entry.target.classList.add(
+                        'visible'
+                    );
+
+                    observer.unobserve(
+                        entry.target
+                    );
+
+                });
 
             },
             {
@@ -437,306 +253,433 @@ if ("IntersectionObserver" in window) {
         );
 
 
-    animatedElements.forEach(
-        (element) => {
-
-            observer.observe(element);
-
-        }
-    );
-
-} else {
-
-    /*
-     * Fallback para navegadores
-     * sem IntersectionObserver.
-     */
-
-    animatedElements.forEach(
-        (element) => {
-
-            element.classList.add(
-                "visible"
-            );
-
-        }
-    );
-
+    elements.forEach(element => {
+        observer.observe(element);
+    });
 }
 
 
 /* =========================================================
-   FORMULÁRIO
+   FORMULÁRIO DE CONTATO
 ========================================================= */
 
-const contactForm =
-    document.getElementById("contactForm");
+function initContactForm() {
 
-const formStatus =
-    document.getElementById("formStatus");
+    const form =
+        document.querySelector(
+            '#contact-form'
+        );
 
-const submitButton =
-    document.getElementById("submitButton");
-
-
-/*
- * IMPORTANTE:
- *
- * Substitua o endereço abaixo pelo e-mail
- * real que deverá receber as mensagens.
- *
- * Não utilizamos "seuemail@dominio.com".
- */
-
-const FORM_ENDPOINT =
-    "https://formsubmit.co/ajax/contato@nafsolucoes.com";
+    if (!form) {
+        return;
+    }
 
 
-if (contactForm) {
+    const status =
+        form.querySelector(
+            '.form-status'
+        );
 
-    contactForm.addEventListener(
-        "submit",
-        async (event) => {
+    const submitButton =
+        form.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    form.addEventListener(
+        'submit',
+        async event => {
 
             event.preventDefault();
 
 
-            if (formStatus) {
+            /*
+             * Evita duplo envio.
+             */
 
-                formStatus.textContent = "";
-                formStatus.className =
-                    "form-status";
-
+            if (
+                form.dataset.submitting === 'true'
+            ) {
+                return;
             }
 
 
-            const formData =
-                new FormData(contactForm);
+            clearFormStatus(status);
 
 
             /*
-             * Honeypot:
-             *
-             * Se o campo oculto estiver preenchido,
-             * consideramos o envio potencialmente
-             * automatizado.
+             * Honeypot.
              */
 
             const honeypot =
-                String(
-                    formData.get("website") || ""
-                ).trim();
+                form.querySelector(
+                    'input[name="website"]'
+                );
 
+            if (
+                honeypot &&
+                honeypot.value.trim() !== ''
+            ) {
 
-            if (honeypot !== "") {
+                /*
+                 * Não informamos ao usuário
+                 * que ele acionou o honeypot.
+                 */
+
+                showFormStatus(
+                    status,
+                    'success',
+                    'Mensagem enviada com sucesso.'
+                );
+
+                form.reset();
 
                 return;
-
             }
 
 
-            const nome =
+            /*
+             * Captura dos dados.
+             */
+
+            const formData =
+                new FormData(form);
+
+
+            const name =
                 String(
-                    formData.get("nome") || ""
+                    formData.get('name') || ''
                 ).trim();
 
             const email =
                 String(
-                    formData.get("email") || ""
+                    formData.get('email') || ''
                 ).trim();
 
-            const telefone =
+            const phone =
                 String(
-                    formData.get("telefone") || ""
+                    formData.get('phone') || ''
                 ).trim();
 
-            const mensagem =
+            const message =
                 String(
-                    formData.get("mensagem") || ""
+                    formData.get('message') || ''
                 ).trim();
 
 
             /*
-             * Validação básica no cliente.
+             * Validação client-side.
              *
-             * A validação no servidor continua sendo
-             * necessária caso o formulário seja migrado
-             * para um backend próprio.
+             * A validação real continuará
+             * obrigatoriamente no servidor.
              */
 
-            if (
-                nome.length < 2 ||
-                nome.length > 100
-            ) {
+            if (!validateName(name)) {
 
-                showFormError(
-                    "Informe seu nome."
+                showFormStatus(
+                    status,
+                    'error',
+                    'Informe seu nome.'
                 );
 
                 return;
+            }
 
+
+            if (!validateEmail(email)) {
+
+                showFormStatus(
+                    status,
+                    'error',
+                    'Informe um e-mail válido.'
+                );
+
+                return;
+            }
+
+
+            if (phone.length > 30) {
+
+                showFormStatus(
+                    status,
+                    'error',
+                    'Informe um telefone válido.'
+                );
+
+                return;
             }
 
 
             if (
-                !isValidEmail(email)
+                message.length < 10 ||
+                message.length > 3000
             ) {
 
-                showFormError(
-                    "Informe um e-mail válido."
+                showFormStatus(
+                    status,
+                    'error',
+                    'A mensagem deve ter entre 10 e 3000 caracteres.'
                 );
 
                 return;
-
-            }
-
-
-            if (
-                mensagem.length < 10 ||
-                mensagem.length > 2000
-            ) {
-
-                showFormError(
-                    "Escreva uma mensagem com pelo menos 10 caracteres."
-                );
-
-                return;
-
             }
 
 
             /*
-             * Evita múltiplos envios enquanto
-             * a requisição está sendo processada.
+             * Prepara envio.
              */
 
-            if (submitButton) {
+            form.dataset.submitting = 'true';
 
-                submitButton.disabled = true;
-
-                submitButton.style.opacity =
-                    "0.65";
-
-                submitButton.innerHTML =
-                    "Enviando...";
-
-            }
+            setSubmitState(
+                submitButton,
+                true
+            );
 
 
             try {
 
                 const response =
                     await fetch(
-                        FORM_ENDPOINT,
+                        CONTACT_ENDPOINT,
                         {
-                            method: "POST",
+                            method: 'POST',
 
                             headers: {
-                                "Accept":
-                                    "application/json",
-                                "Content-Type":
-                                    "application/json"
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json'
                             },
 
-                            body:
-                                JSON.stringify({
-                                    nome,
-                                    email,
-                                    telefone,
-                                    mensagem,
-                                    _subject:
-                                        "Novo contato - NAF Soluções Digitais"
-                                })
+                            credentials: 'same-origin',
+
+                            body: JSON.stringify({
+                                name,
+                                email,
+                                phone,
+                                message,
+
+                                /*
+                                 * Campo honeypot.
+                                 */
+
+                                website:
+                                    honeypot
+                                        ? honeypot.value
+                                        : ''
+                            })
                         }
                     );
 
 
-                if (!response.ok) {
+                /*
+                 * Tenta interpretar JSON.
+                 */
 
-                    throw new Error(
-                        "Falha no envio."
+                let result = null;
+
+                try {
+
+                    result =
+                        await response.json();
+
+                } catch {
+                    result = null;
+                }
+
+
+                if (
+                    response.ok &&
+                    result &&
+                    result.success === true
+                ) {
+
+                    showFormStatus(
+                        status,
+                        'success',
+                        result.message ||
+                            'Mensagem enviada com sucesso.'
                     );
 
+                    form.reset();
+
+                } else {
+
+                    showFormStatus(
+                        status,
+                        'error',
+                        result?.message ||
+                            'Não foi possível enviar sua mensagem. Tente novamente.'
+                    );
                 }
-
-
-                if (formStatus) {
-
-                    formStatus.textContent =
-                        "Mensagem enviada com sucesso. Entraremos em contato.";
-
-                    formStatus.className =
-                        "form-status success";
-
-                }
-
-
-                contactForm.reset();
 
 
             } catch (error) {
 
+                /*
+                 * Não mostramos detalhes internos
+                 * do erro ao visitante.
+                 */
+
                 console.error(
-                    "Erro no formulário:",
+                    'Falha no envio do formulário:',
                     error
                 );
 
-
-                showFormError(
-                    "Não foi possível enviar a mensagem agora. Tente novamente ou entre em contato pelo WhatsApp."
+                showFormStatus(
+                    status,
+                    'error',
+                    'Não foi possível conectar ao servidor. Tente novamente.'
                 );
-
 
             } finally {
 
-                if (submitButton) {
+                form.dataset.submitting = 'false';
 
-                    submitButton.disabled =
-                        false;
-
-                    submitButton.style.opacity =
-                        "";
-
-                    submitButton.innerHTML =
-                        'Enviar mensagem <span>→</span>';
-
-                }
-
+                setSubmitState(
+                    submitButton,
+                    false
+                );
             }
 
         }
     );
-
 }
 
 
 /* =========================================================
-   FUNÇÕES DO FORMULÁRIO
+   VALIDAÇÃO DE NOME
 ========================================================= */
 
-function isValidEmail(email) {
+function validateName(name) {
 
-    /*
-     * Validação simples para interface.
-     * Não substitui validação do servidor.
-     */
+    if (!name) {
+        return false;
+    }
 
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(email);
+    if (name.length > 100) {
+        return false;
+    }
 
+    return true;
 }
 
 
-function showFormError(message) {
+/* =========================================================
+   VALIDAÇÃO DE E-MAIL
+========================================================= */
 
-    if (!formStatus) {
+function validateEmail(email) {
+
+    if (!email) {
+        return false;
+    }
+
+    if (email.length > 254) {
+        return false;
+    }
+
+    /*
+     * Validação básica para UX.
+     *
+     * A validação definitiva é feita
+     * pelo PHP no servidor.
+     */
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return emailPattern.test(email);
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showFormStatus(
+    element,
+    type,
+    message
+) {
+
+    if (!element) {
         return;
     }
 
-    formStatus.textContent =
-        message;
+    /*
+     * textContent em vez de innerHTML.
+     *
+     * Isso evita interpretar conteúdo recebido
+     * como HTML.
+     */
 
-    formStatus.className =
-        "form-status error";
+    element.textContent = message;
 
+    element.classList.remove(
+        'success',
+        'error'
+    );
+
+    element.classList.add(type);
+}
+
+
+function clearFormStatus(element) {
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent = '';
+
+    element.classList.remove(
+        'success',
+        'error'
+    );
+}
+
+
+/* =========================================================
+   BOTÃO
+========================================================= */
+
+function setSubmitState(
+    button,
+    loading
+) {
+
+    if (!button) {
+        return;
+    }
+
+    if (loading) {
+
+        button.disabled = true;
+
+        button.dataset.originalText =
+            button.textContent;
+
+        button.textContent =
+            'Enviando...';
+
+        button.setAttribute(
+            'aria-busy',
+            'true'
+        );
+
+    } else {
+
+        button.disabled = false;
+
+        button.textContent =
+            button.dataset.originalText ||
+            'Enviar mensagem';
+
+        button.removeAttribute(
+            'aria-busy'
+        );
+    }
 }
