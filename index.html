@@ -1,1776 +1,1245 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="NAF Soluções Digitais — desenvolvimento de sites, sistemas web, automações e soluções com inteligência artificial."
+    >
+
+    <meta
+        name="theme-color"
+        content="#050505"
+    >
+
     <title>NAF Soluções Digitais</title>
-    <meta name="description" content="NAF Soluções Digitais — Landing pages, sistemas web, automações e inteligência artificial sob medida." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-    <style>
-        /* ===== RESET & BASE ===== */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-        }
-        :root {
-            --blue: #3b82f6;
-            --blue-bright: #60a5fa;
-            --blue-dark: #1d4ed8;
-            --blue-glow: rgba(59, 130, 246, 0.35);
-            --blue-subtle: rgba(59, 130, 246, 0.08);
-            --bg: #050505;
-            --bg-elevated: #0c0c0c;
-            --card: rgba(255, 255, 255, 0.03);
-            --card-hover: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.07);
-            --border-hover: rgba(59, 130, 246, 0.4);
-            --text: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --text-dim: #71717a;
-            --radius: 16px;
-            --radius-lg: 24px;
-            --radius-full: 9999px;
-            --ease: cubic-bezier(0.22, 1, 0.36, 1);
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.6;
-        }
-        ::selection {
-            background: rgba(59, 130, 246, 0.35);
-            color: white;
-        }
 
-        /* ===== LOADER ===== */
-        #loader {
-            position: fixed;
-            inset: 0;
-            background: #030303;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-            z-index: 999999;
-            transition: opacity 0.7s var(--ease), visibility 0.7s;
-        }
-        #loader img {
-            width: 180px;
-            opacity: 0.9;
-            animation: logoFloat 1.8s ease-in-out infinite alternate;
-        }
-        #loader .loader-bar {
-            width: 120px;
-            height: 2px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        #loader .loader-bar span {
-            display: block;
-            height: 100%;
-            width: 40%;
-            background: linear-gradient(90deg, transparent, var(--blue), transparent);
-            animation: loadSlide 1.2s ease-in-out infinite;
-        }
-        @keyframes logoFloat {
-            from { opacity: 0.5; transform: translateY(4px) scale(0.98); }
-            to   { opacity: 1;   transform: translateY(-4px) scale(1); }
-        }
-        @keyframes loadSlide {
-            0%   { transform: translateX(-100%); }
-            100% { transform: translateX(300%); }
-        }
-        #loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        /* ===== MOUSE GLOW ===== */
-        #mouse-glow {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 65%);
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: left 0.12s ease-out, top 0.12s ease-out;
-            will-change: left, top;
-            mix-blend-mode: screen;
-        }
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-        /* ===== PARTICLES ===== */
-        #particles-canvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        /* ===== BACKGROUND PATTERN ===== */
-        .bg-pattern {
-            position: relative;
-            z-index: 1;
-        }
-        .bg-pattern::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 28px 28px;
-            pointer-events: none;
-            z-index: 0;
-            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 70%);
-        }
-        .bg-pattern > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ===== GLASS ===== */
-        .glass {
-            background: var(--card);
-            backdrop-filter: blur(20px) saturate(1.4);
-            -webkit-backdrop-filter: blur(20px) saturate(1.4);
-            border: 1px solid var(--border);
-            box-shadow:
-                0 4px 24px rgba(0,0,0,0.4),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-        .glass-hover {
-            transition: all 0.45s var(--ease);
-        }
-        .glass-hover:hover {
-            border-color: var(--border-hover);
-            background: var(--card-hover);
-            box-shadow:
-                0 12px 48px rgba(0,0,0,0.5),
-                0 0 0 1px rgba(59,130,246,0.15),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-            transform: translateY(-6px);
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(36px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up {
-            opacity: 0;
-            transform: translateY(36px);
-            transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .delay-1 { transition-delay: 0.08s; }
-        .delay-2 { transition-delay: 0.16s; }
-        .delay-3 { transition-delay: 0.24s; }
-        .delay-4 { transition-delay: 0.32s; }
-        .delay-5 { transition-delay: 0.40s; }
-        .delay-6 { transition-delay: 0.48s; }
-
-        @keyframes scroll-tech {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .tech-track {
-            display: flex;
-            gap: 56px;
-            animation: scroll-tech 32s linear infinite;
-            width: max-content;
-        }
-        .tech-track span {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-dim);
-            white-space: nowrap;
-            letter-spacing: 0.04em;
-            transition: color 0.3s;
-        }
-        .tech-track span:hover {
-            color: var(--blue-bright);
-        }
-
-        @keyframes pulse-wpp {
-            0%, 100% { transform: scale(1); box-shadow: 0 12px 36px rgba(37, 211, 102, 0.35); }
-            50%      { transform: scale(1.06); box-shadow: 0 16px 48px rgba(37, 211, 102, 0.5); }
-        }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--blue);
-        }
-
-        /* ===== UTILITIES ===== */
-        .container {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 0 28px;
-        }
-        .section-title {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            margin-bottom: 12px;
-            line-height: 1.15;
-        }
-        .section-title span {
-            background: linear-gradient(135deg, var(--blue-bright), var(--blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .section-subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            font-weight: 400;
-            max-width: 480px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-            color: white;
-            border: none;
-            padding: 15px 36px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.35s var(--ease);
-            box-shadow: 0 8px 28px var(--blue-glow);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 14px 40px var(--blue-glow);
-        }
-        .btn-primary:hover::before { opacity: 1; }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 14px 30px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.35s var(--ease);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-secondary:hover {
-            border-color: var(--blue);
-            color: white;
-            background: var(--blue-subtle);
-        }
-
-        /* ===== HEADER ===== */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            padding: 18px 0;
-            background: transparent;
-            transition: all 0.4s var(--ease);
-        }
-        header.scrolled {
-            padding: 12px 0;
-            background: rgba(5, 5, 5, 0.75);
-            backdrop-filter: blur(20px) saturate(1.5);
-            -webkit-backdrop-filter: blur(20px) saturate(1.5);
-            border-bottom: 1px solid var(--border);
-        }
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo-img {
-            height: 40px;
-            width: auto;
-            display: block;
-            transition: opacity 0.3s;
-        }
-        .logo-img:hover { opacity: 0.85; }
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.25s;
-            position: relative;
-        }
-        nav a:hover {
-            color: white;
-            background: rgba(255,255,255,0.04);
-        }
-        .btn-header {
-            background: var(--blue) !important;
-            color: white !important;
-            padding: 10px 22px !important;
-            border-radius: 10px !important;
-            font-weight: 600 !important;
-            font-size: 0.85rem !important;
-            box-shadow: 0 4px 16px var(--blue-glow);
-        }
-        .btn-header:hover {
-            background: var(--blue-dark) !important;
-            transform: translateY(-1px);
-        }
-
-        /* ===== HERO ===== */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 140px 0 100px;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero .glow-top {
-            position: absolute;
-            top: -25%;
-            right: -15%;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            pointer-events: none;
-            animation: glowPulse 8s ease-in-out infinite alternate;
-        }
-        .hero .glow-bottom {
-            position: absolute;
-            bottom: -35%;
-            left: -15%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(90px);
-            pointer-events: none;
-        }
-        @keyframes glowPulse {
-            from { opacity: 0.6; transform: scale(1); }
-            to   { opacity: 1;   transform: scale(1.08); }
-        }
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            align-items: center;
-            gap: 64px;
-            position: relative;
-            z-index: 2;
-        }
-        .hero-content { text-align: left; }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            padding: 7px 18px;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.02em;
-            margin-bottom: 28px;
-        }
-        .hero-badge strong {
-            color: var(--blue-bright);
-            font-weight: 700;
-        }
-        .hero h1 {
-            font-size: clamp(2.6rem, 5.5vw, 3.9rem);
-            font-weight: 800;
-            line-height: 1.08;
-            max-width: 620px;
-            margin: 0 0 20px;
-            letter-spacing: -0.045em;
-        }
-        .hero h1 .highlight {
-            background: linear-gradient(135deg, #93c5fd, var(--blue), #2563eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-        }
-        .hero-subtitle {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            max-width: 440px;
-            margin: 0 0 8px;
-            line-height: 1.7;
-            font-weight: 400;
-        }
-        .hero-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 28px 0 36px;
-        }
-        .hero-tags span {
-            background: rgba(255,255,255,0.03);
-            padding: 8px 18px;
-            border-radius: var(--radius-full);
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            transition: all 0.3s var(--ease);
-        }
-        .hero-tags span:hover {
-            border-color: var(--blue);
-            color: white;
-            background: var(--blue-subtle);
-            transform: translateY(-2px);
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .hero-image {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        .hero-image::before {
-            content: '';
-            position: absolute;
-            inset: -20%;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 60%);
-            filter: blur(40px);
-            z-index: -1;
-        }
-        .hero-image img {
-            width: 100%;
-            max-width: 560px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow:
-                0 40px 100px rgba(0,0,0,0.6),
-                0 0 80px rgba(59,130,246,0.12);
-            transition: transform 0.5s var(--ease);
-        }
-        .hero-image img:hover {
-            transform: translateY(-10px) scale(1.015);
-        }
-
-        /* ===== STATS ===== */
-        .stats-wrapper {
-            margin-top: -50px;
-            position: relative;
-            z-index: 3;
-            padding-bottom: 20px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            max-width: 720px;
-            margin: 0 auto;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.025);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px 14px;
-            text-align: center;
-            transition: all 0.35s var(--ease);
-        }
-        .stat-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.04);
-        }
-        .stat-card .number {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            display: block;
-            letter-spacing: -0.03em;
-        }
-        .stat-card .label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            font-weight: 500;
-            margin-top: 4px;
-            letter-spacing: 0.02em;
-        }
-
-        /* ===== FOUNDER ===== */
-        .founder {
-            padding: 120px 0;
-            border-top: 1px solid var(--border);
-        }
-        .founder-grid {
-            display: grid;
-            grid-template-columns: 360px 1fr;
-            gap: 72px;
-            align-items: center;
-        }
-        .founder-grid img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            transition: all 0.45s var(--ease);
-        }
-        .founder-grid img:hover {
-            transform: scale(1.025);
-            border-color: var(--border-hover);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.55), 0 0 40px rgba(59,130,246,0.1);
-        }
-        .founder-content h2 {
-            font-size: 1.85rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.03em;
-        }
-        .founder-content h2 span {
-            background: linear-gradient(135deg, var(--blue-bright), var(--blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .founder-content h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 18px;
-        }
-        .founder-content p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.8;
-            max-width: 460px;
-            margin-bottom: 14px;
-        }
-        .founder-content .btn-primary {
-            margin-top: 16px;
-        }
-
-        /* ===== TECH BAR ===== */
-        .tech-bar {
-            padding: 36px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            overflow: hidden;
-            background: rgba(0,0,0,0.35);
-        }
-        .tech-bar .container {
-            overflow: hidden;
-            position: relative;
-        }
-        .tech-bar .container::before,
-        .tech-bar .container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100px;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .tech-bar .container::before {
-            left: 0;
-            background: linear-gradient(to right, var(--bg), transparent);
-        }
-        .tech-bar .container::after {
-            right: 0;
-            background: linear-gradient(to left, var(--bg), transparent);
-        }
-
-        /* ===== SERVICES ===== */
-        .services {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-        }
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 56px;
-        }
-        .service-card {
-            background: rgba(255,255,255,0.025);
-            backdrop-filter: blur(16px);
-            padding: 32px 24px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.4s var(--ease);
-            text-align: left;
-            cursor: default;
-            position: relative;
-            overflow: hidden;
-        }
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .service-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-8px);
-            background: rgba(255,255,255,0.04);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(59,130,246,0.06);
-        }
-        .service-card:hover::before { opacity: 1; }
-        .service-card .icon-svg {
-            width: 36px;
-            height: 36px;
-            margin-bottom: 18px;
-            display: block;
-            color: var(--blue-bright);
-            transition: transform 0.35s var(--ease);
-        }
-        .service-card:hover .icon-svg {
-            transform: scale(1.1);
-        }
-        .service-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: white;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-        .service-card p {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            line-height: 1.65;
-        }
-
-        /* ===== PORTFOLIO ===== */
-        .portfolio {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-        }
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-            margin-top: 56px;
-        }
-        .portfolio-card {
-            background: rgba(255,255,255,0.025);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all 0.45s var(--ease);
-            cursor: pointer;
-            group: true;
-        }
-        .portfolio-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-8px);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(59,130,246,0.08);
-        }
-        .portfolio-card .thumb {
-            width: 100%;
-            height: 190px;
-            overflow: hidden;
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .portfolio-card .thumb::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(5,5,5,0.6) 0%, transparent 40%);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .portfolio-card:hover .thumb::after { opacity: 1; }
-        .portfolio-card .thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s var(--ease);
-        }
-        .portfolio-card:hover .thumb img {
-            transform: scale(1.1);
-        }
-        .portfolio-card .info {
-            padding: 20px 22px 24px;
-        }
-        .portfolio-card .info h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 4px;
-            letter-spacing: -0.01em;
-        }
-        .portfolio-card .info p {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-bottom: 14px;
-        }
-        .portfolio-card .info .btn-small {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--blue-bright);
-            text-decoration: none;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .portfolio-card .info .btn-small:hover {
-            color: white;
-            gap: 8px;
-        }
-
-        /* ===== BENEFITS ===== */
-        .benefits {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-        }
-        .benefits-grid {
-            margin-top: 56px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-        }
-        .benefits-grid div {
-            padding: 28px 20px;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            transition: all 0.35s var(--ease);
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            text-align: center;
-            cursor: default;
-        }
-        .benefits-grid div:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-5px);
-            color: white;
-            background: var(--blue-subtle);
-        }
-
-        /* ===== TIMELINE ===== */
-        .timeline {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-        }
-        .timeline-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 64px;
-            position: relative;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .timeline-steps::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 4%;
-            right: 4%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
-            z-index: 0;
-        }
-        .step {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px 26px;
-            text-align: center;
-            min-width: 130px;
-            position: relative;
-            z-index: 1;
-            transition: all 0.35s var(--ease);
-        }
-        .step:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-6px);
-            background: rgba(255,255,255,0.05);
-        }
-        .step .number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--blue-bright), var(--blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-            letter-spacing: -0.03em;
-        }
-        .step .label {
-            font-size: 0.78rem;
-            color: var(--text-dim);
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        /* ===== ABOUT ===== */
-        .about {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: center;
-        }
-        .about-content h2 {
-            font-size: clamp(2rem, 3.5vw, 2.7rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            margin-bottom: 22px;
-            line-height: 1.15;
-        }
-        .about-content h2 span {
-            background: linear-gradient(135deg, var(--blue-bright), var(--blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .about-content p {
-            color: var(--text-muted);
-            max-width: 460px;
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-        .about-list {
-            list-style: none;
-            margin-top: 28px;
-        }
-        .about-list li {
-            padding: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #d4d4d8;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        .about-list li::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 8px var(--blue-glow);
-            flex-shrink: 0;
-        }
-        .about-card {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 48px 40px;
-            border: 1px solid var(--border);
-            text-align: center;
-            transition: all 0.4s var(--ease);
-        }
-        .about-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-        }
-        .about-card .emoji {
-            font-size: 3.5rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .about-card .quote {
-            color: var(--text-muted);
-            font-style: italic;
-            margin-top: 12px;
-            font-size: 1.15rem;
-            line-height: 1.5;
-        }
-        .about-card .divider {
-            width: 48px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--blue), transparent);
-            margin: 20px auto;
-            border-radius: 3px;
-        }
-        .about-card .label {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-
-        /* ===== CONTACT ===== */
-        .contact {
-            padding: 110px 0;
-            border-top: 1px solid var(--border);
-        }
-        .contact-form {
-            max-width: 640px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.025);
-            backdrop-filter: blur(20px);
-            padding: 48px 52px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-        }
-        .contact-form .form-group {
-            margin-bottom: 20px;
-        }
-        .contact-form label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-dim);
-            margin-bottom: 7px;
-            letter-spacing: 0.02em;
-        }
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px 18px;
-            color: white;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-            outline: none;
-        }
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-            background: rgba(0,0,0,0.45);
-        }
-        .contact-form input::placeholder,
-        .contact-form textarea::placeholder {
-            color: #3f3f46;
-        }
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-        .form-status {
-            padding: 14px 18px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .form-status.success {
-            display: block;
-            background: rgba(34,197,94,0.1);
-            border: 1px solid rgba(34,197,94,0.25);
-            color: #4ade80;
-        }
-        .form-status.error {
-            display: block;
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.25);
-            color: #f87171;
-        }
-        .form-status.loading {
-            display: block;
-            background: rgba(59,130,246,0.1);
-            border: 1px solid rgba(59,130,246,0.25);
-            color: var(--blue-bright);
-        }
-
-        /* ===== WHATSAPP ===== */
-        .whatsapp {
-            position: fixed;
-            right: 28px;
-            bottom: 28px;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            background: #25D366;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 12px 36px rgba(37,211,102,0.35);
-            z-index: 999;
-            animation: pulse-wpp 2.5s ease-in-out infinite;
-            transition: transform 0.3s var(--ease);
-            text-decoration: none;
-        }
-        .whatsapp:hover {
-            transform: scale(1.12);
-            animation: none;
-        }
-        .whatsapp svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 64px 0 40px;
-            background: rgba(0,0,0,0.4);
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 48px;
-        }
-        .footer-col h4 {
-            color: white;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 18px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-        .footer-col p,
-        .footer-col a {
-            color: var(--text-dim);
-            font-size: 0.875rem;
-            line-height: 2.1;
-            text-decoration: none;
-            display: block;
-            transition: color 0.25s;
-        }
-        .footer-col a:hover { color: white; }
-        .footer-col .logo-small {
-            height: 30px;
-            width: auto;
-            margin-bottom: 14px;
-        }
-        .footer-col .social-links {
-            display: flex;
-            gap: 14px;
-            margin-top: 16px;
-        }
-        .footer-col .social-links a {
-            color: var(--text-dim);
-            font-size: 1.15rem;
-            transition: color 0.25s, transform 0.25s;
-            display: inline-block;
-        }
-        .footer-col .social-links a:hover {
-            color: var(--blue-bright);
-            transform: translateY(-2px);
-        }
-        .footer-tech {
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-            font-size: 0.7rem;
-            color: #3f3f46;
-            letter-spacing: 0.03em;
-        }
-        .footer-tech strong { color: #52525b; }
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            padding-top: 28px;
-            text-align: center;
-            color: #3f3f46;
-            font-size: 0.8rem;
-        }
-        .footer-bottom strong { color: var(--text-muted); }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .hero-grid {
-                grid-template-columns: 1fr;
-                gap: 48px;
-                text-align: center;
-            }
-            .hero-content { text-align: center; }
-            .hero h1 { max-width: 100%; }
-            .hero-subtitle { max-width: 100%; margin-left: auto; margin-right: auto; }
-            .hero-tags { justify-content: center; }
-            .hero-buttons { justify-content: center; }
-            .hero-image img { max-width: 100%; }
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-            .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
-            .about {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            .about-content p { max-width: 100%; }
-            .founder-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-            .founder-content p {
-                max-width: 100%;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .benefits-grid { grid-template-columns: repeat(2, 1fr); }
-            .timeline-steps::before { display: none; }
-            .timeline-steps {
-                gap: 14px;
-                justify-content: center;
-            }
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 32px;
-            }
-        }
-        @media (max-width: 768px) {
-            .hero { padding: 120px 0 80px; }
-            .hero h1 { font-size: 2.5rem; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            nav ul { gap: 4px; }
-            nav a { font-size: 0.8rem; padding: 6px 12px; }
-            .btn-header { padding: 8px 16px !important; font-size: 0.75rem !important; }
-            .contact-form { padding: 32px 24px; }
-            .form-row { grid-template-columns: 1fr; }
-            .services-grid { grid-template-columns: 1fr; }
-            .portfolio-grid { grid-template-columns: 1fr; }
-            .benefits-grid { grid-template-columns: 1fr; }
-            .footer-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .footer-col .social-links { justify-content: center; }
-            .whatsapp { right: 20px; bottom: 20px; width: 52px; height: 52px; }
-        }
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 2rem; }
-            .stats-grid { gap: 10px; }
-            .stat-card .number { font-size: 1.4rem; }
-            .container { padding: 0 18px; }
-            .contact-form { padding: 24px 18px; }
-            .hero-buttons { flex-direction: column; width: 100%; }
-            .hero-buttons .btn-primary,
-            .hero-buttons .btn-secondary { width: 100%; justify-content: center; }
-            .step { min-width: 100px; padding: 16px 18px; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <!-- LOADER -->
-    <div id="loader">
-        <img src="img/logo-naf.svg" alt="NAF Soluções Digitais" />
-        <div class="loader-bar"><span></span></div>
+    <!-- ==========================================
+         LOADER
+    =========================================== -->
+
+    <div class="loader" id="loader" aria-hidden="true">
+        <img
+            src="img/logo-naf.svg"
+            alt="NAF Soluções Digitais"
+            class="loader-logo"
+        >
+
+        <div class="loader-line"></div>
     </div>
 
-    <!-- MOUSE GLOW -->
-    <div id="mouse-glow"></div>
 
-    <!-- PARTICLES -->
-    <canvas id="particles-canvas"></canvas>
+    <!-- ==========================================
+         EFEITOS DE FUNDO
+    =========================================== -->
 
-    <!-- HEADER -->
-    <header>
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <canvas
+        id="particles"
+        aria-hidden="true"
+    ></canvas>
+
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+    <header id="header">
+
         <div class="container header-content">
-            <a href="#" class="logo">
-                <img src="img/logo-naf.svg" alt="NAF Soluções Digitais" class="logo-img" />
+
+            <a
+                href="#inicio"
+                class="logo"
+                aria-label="NAF Soluções Digitais - Início"
+            >
+                <img
+                    src="img/logo-naf.svg"
+                    alt="NAF Soluções Digitais"
+                    class="logo-img"
+                >
             </a>
-            <nav>
-                <ul>
-                    <li><a href="#servicos">Serviços</a></li>
-                    <li><a href="#portfolio">Portfólio</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li><a href="#contato" class="btn-header">Fale Conosco</a></li>
-                </ul>
+
+
+            <nav
+                class="nav"
+                id="mainNav"
+                aria-label="Navegação principal"
+            >
+
+                <a href="#inicio">Início</a>
+                <a href="#servicos">Serviços</a>
+                <a href="#projetos">Projetos</a>
+                <a href="#sobre">Sobre</a>
+                <a href="#contato">Contato</a>
+
             </nav>
+
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="mainNav"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
         </div>
+
     </header>
 
-    <!-- HERO -->
-    <section class="hero bg-pattern">
-        <div class="glow-top"></div>
-        <div class="glow-bottom"></div>
-        <div class="container">
-            <div class="hero-grid">
-                <div class="hero-content">
-                    <div class="hero-badge fade-up">🚀 <strong>+50</strong> projetos entregues</div>
-                    <h1 class="fade-up delay-1">
-                        Transformamos ideias em <br><span class="highlight">soluções digitais.</span>
+
+    <main>
+
+        <!-- ==========================================
+             HERO
+        =========================================== -->
+
+        <section
+            class="hero"
+            id="inicio"
+        >
+
+            <div class="hero-grid"></div>
+
+            <div class="container hero-content">
+
+                <div class="hero-text fade-up">
+
+                    <div class="eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        Soluções digitais sob medida
+                    </div>
+
+
+                    <h1>
+                        Transformamos
+                        <span>ideias</span>
+                        em soluções digitais.
                     </h1>
-                    <p class="hero-subtitle fade-up delay-1">Da estratégia à execução, tecnologia que impulsiona seu negócio.</p>
-                    <div class="hero-tags fade-up delay-2">
-                        <span>🌐 Landing Pages</span>
-                        <span>⚙️ Sistemas</span>
-                        <span>🧠 Inteligência Artificial</span>
-                        <span>🤖 Automações</span>
-                    </div>
-                    <div class="hero-buttons fade-up delay-3">
-                        <a href="#contato" class="btn-primary">Quero uma solução</a>
-                        <a href="#portfolio" class="btn-secondary">Ver portfólio</a>
-                    </div>
-                </div>
-                <div class="hero-image fade-up delay-4">
-                    <img src="img/neurocombat-mockup.webp" alt="NeuroCombat Academy - Projeto NAF" />
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- STATS -->
-    <div class="container stats-wrapper">
-        <div class="stats-grid fade-up delay-4">
-            <div class="stat-card">
-                <span class="number">+30</span>
-                <span class="label">Projetos Entregues</span>
-            </div>
-            <div class="stat-card">
-                <span class="number">100%</span>
-                <span class="label">Responsivo</span>
-            </div>
-            <div class="stat-card">
-                <span class="number">IA</span>
-                <span class="label">Integrada</span>
-            </div>
-            <div class="stat-card">
-                <span class="number">SEO</span>
-                <span class="label">Otimizado</span>
-            </div>
-        </div>
-    </div>
 
-    <!-- FOUNDER -->
-    <section class="founder">
-        <div class="container founder-grid">
-            <div class="fade-up">
-                <img src="img/nesio.webp" alt="Nésio Ferreira - Fundador NAF" />
-            </div>
-            <div class="founder-content fade-up delay-1">
-                <h2>Quem está por trás da <span>NAF?</span></h2>
-                <h3>Nésio Ferreira</h3>
-                <p>
-                    Engenheiro de Controle e Automação, desenvolvedor de soluções digitais, especialista em automações, inteligência artificial e sistemas web.
-                </p>
-                <p>
-                    Minha missão é transformar ideias em produtos digitais que realmente gerem resultados.
-                </p>
-                <a href="#contato" class="btn-primary">Vamos conversar</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- TECH BAR -->
-    <div class="tech-bar">
-        <div class="container">
-            <div class="tech-track">
-                <span>HTML5</span>
-                <span>CSS3</span>
-                <span>JavaScript</span>
-                <span>PHP</span>
-                <span>Python</span>
-                <span>Firebase</span>
-                <span>Apps Script</span>
-                <span>GitHub</span>
-                <span>Cloud</span>
-                <span>OpenAI</span>
-                <span>✦</span>
-                <span>HTML5</span>
-                <span>CSS3</span>
-                <span>JavaScript</span>
-                <span>PHP</span>
-                <span>Python</span>
-                <span>Firebase</span>
-                <span>Apps Script</span>
-                <span>GitHub</span>
-                <span>Cloud</span>
-                <span>OpenAI</span>
-                <span>✦</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- SERVICES -->
-    <section id="servicos" class="services">
-        <div class="container">
-            <div style="text-align:center;">
-                <h2 class="section-title">O que <span>fazemos</span></h2>
-                <p class="section-subtitle">Tecnologia que transforma ideias em resultados concretos.</p>
-            </div>
-            <div class="services-grid">
-                <div class="service-card fade-up delay-1">
-                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="2" y1="12" x2="22" y2="12" />
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
-                    <h3>Landing Pages</h3>
-                    <p>Alta conversão, responsivas, SEO e integração com WhatsApp.</p>
-                </div>
-                <div class="service-card fade-up delay-2">
-                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="M8 8h8" />
-                        <path d="M8 12h6" />
-                        <path d="M8 16h4" />
-                    </svg>
-                    <h3>Sites Institucionais</h3>
-                    <p>Presença digital sólida para empresas, clínicas e profissionais.</p>
-                </div>
-                <div class="service-card fade-up delay-3">
-                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="3" width="20" height="14" rx="2" />
-                        <line x1="8" y1="21" x2="16" y2="21" />
-                        <line x1="12" y1="17" x2="12" y2="21" />
-                        <path d="M6 7h.01" />
-                        <path d="M10 7h.01" />
-                    </svg>
-                    <h3>Sistemas Web</h3>
-                    <p>Painéis administrativos, controle de dados e soluções customizadas.</p>
-                </div>
-                <div class="service-card fade-up delay-4">
-                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" />
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                        <path d="M8 13h.01" />
-                        <path d="M12 13h.01" />
-                        <path d="M16 13h.01" />
-                    </svg>
-                    <h3>Automações & IA</h3>
-                    <p>Google Workspace, chatbots, análise de dados e Apps Script.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PORTFOLIO -->
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <div style="text-align:center;">
-                <h2 class="section-title">Projetos <span>recentes</span></h2>
-                <p class="section-subtitle">Soluções entregues com excelência e tecnologia de ponta.</p>
-            </div>
-            <div class="portfolio-grid">
-                <div class="portfolio-card fade-up delay-1">
-                    <div class="thumb"><img src="img/neurocombat.webp" alt="NeuroCombat Academy" /></div>
-                    <div class="info">
-                        <h3>NeuroCombat Academy</h3>
-                        <p>Plataforma de treinamento com gamificação.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-2">
-                    <div class="thumb"><img src="img/natalia.webp" alt="Natália Ferreira Landing Page" /></div>
-                    <div class="info">
-                        <h3>Natália Ferreira</h3>
-                        <p>Landing Page de alta conversão.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-3">
-                    <div class="thumb"><img src="img/ambiental.webp" alt="Sistema Ambiental" /></div>
-                    <div class="info">
-                        <h3>Sistema Ambiental</h3>
-                        <p>Dashboard de monitoramento sustentável.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-4">
-                    <div class="thumb"><img src="img/maze-game.webp" alt="Maze AI Game" /></div>
-                    <div class="info">
-                        <h3>Maze AI Game</h3>
-                        <p>Jogo interativo com inteligência artificial.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-5">
-                    <div class="thumb"><img src="img/pre-laudo.webp" alt="Pré-Laudo Landing Page" /></div>
-                    <div class="info">
-                        <h3>Pré-Laudo</h3>
-                        <p>Captação de leads para clínica médica.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-6">
-                    <div class="thumb"><img src="img/dashboard.webp" alt="Dashboard Ambiental" /></div>
-                    <div class="info">
-                        <h3>Dashboard Ambiental</h3>
-                        <p>Google Workspace e automação de dados.</p>
-                        <a href="#" class="btn-small">Ver Projeto →</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- BENEFITS -->
-    <section class="benefits">
-        <div class="container">
-            <div style="text-align:center;">
-                <h2 class="section-title">Por que escolher a <span>NAF?</span></h2>
-                <p class="section-subtitle">Qualidade e tecnologia em cada projeto.</p>
-            </div>
-            <div class="benefits-grid">
-                <div>✔ Código limpo</div>
-                <div>✔ Performance</div>
-                <div>✔ SEO</div>
-                <div>✔ IA</div>
-                <div>✔ Design Premium</div>
-                <div>✔ Suporte</div>
-                <div>✔ Segurança</div>
-                <div>✔ Escalabilidade</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TIMELINE -->
-    <section class="timeline">
-        <div class="container">
-            <div style="text-align:center;">
-                <h2 class="section-title">Como <span>trabalhamos</span></h2>
-                <p class="section-subtitle">Do briefing à entrega, um processo transparente.</p>
-            </div>
-            <div class="timeline-steps">
-                <div class="step"><span class="number">01</span><span class="label">Briefing</span></div>
-                <div class="step"><span class="number">02</span><span class="label">Planejamento</span></div>
-                <div class="step"><span class="number">03</span><span class="label">Design</span></div>
-                <div class="step"><span class="number">04</span><span class="label">Desenvolvimento</span></div>
-                <div class="step"><span class="number">05</span><span class="label">Entrega</span></div>
-                <div class="step"><span class="number">06</span><span class="label">Suporte</span></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="sobre" class="about container">
-        <div class="about-content fade-up">
-            <h2>Tecnologia aplicada para <br><span>resolver problemas reais.</span></h2>
-            <p>Desenvolvemos soluções digitais completas, unindo estratégia, design, desenvolvimento e automação para transformar ideias em resultados concretos.</p>
-            <ul class="about-list">
-                <li>Projetos escaláveis e seguros</li>
-                <li>Automações que reduzem custos</li>
-                <li>IA aplicada para dados e atendimento</li>
-                <li>Suporte e evolução contínua</li>
-            </ul>
-        </div>
-        <div class="about-card fade-up delay-1">
-            <span class="emoji">🧠</span>
-            <p class="quote">"Projetos que conversam com o futuro."</p>
-            <div class="divider"></div>
-            <span class="label">Case: NeuroCombat Academy</span>
-        </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contato" class="contact">
-        <div class="container">
-            <div style="text-align:center; margin-bottom:48px;">
-                <h2 class="section-title">Vamos <span>conversar</span></h2>
-                <p class="section-subtitle">Preencha o formulário e daremos vida à sua ideia.</p>
-            </div>
-            <form class="contact-form fade-up" id="formContato">
-                <div id="formStatus" class="form-status"></div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nome">Nome</label>
-                        <input type="text" id="nome" placeholder="Seu nome" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" placeholder="contato@email.com" required />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="telefone">Telefone (opcional)</label>
-                    <input type="tel" id="telefone" placeholder="(11) 99999-9999" />
-                </div>
-                <div class="form-group">
-                    <label for="mensagem">Mensagem</label>
-                    <textarea id="mensagem" placeholder="Conte-nos sobre seu projeto..." required></textarea>
-                </div>
-                <button type="submit" class="btn-primary" style="width:100%; justify-content:center;" id="btnEnviar">
-                    Enviar mensagem →
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <img src="img/logo-naf.svg" alt="NAF" class="logo-small" />
-                    <p style="font-size:0.85rem; line-height:1.8; max-width:280px;">
-                        Tecnologia que conecta ideias a resultados. Soluções digitais sob medida para o seu negócio.
+                    <p class="hero-description">
+                        Desenvolvemos sites, sistemas, automações e
+                        soluções inteligentes para transformar problemas
+                        reais em experiências digitais eficientes.
                     </p>
-                    <div class="social-links">
-                        <a href="#" aria-label="WhatsApp">💬</a>
-                        <a href="#" aria-label="Instagram">📸</a>
-                        <a href="#" aria-label="GitHub">🐙</a>
-                        <a href="#" aria-label="LinkedIn">🔗</a>
-                        <a href="#" aria-label="Email">✉️</a>
+
+
+                    <div class="hero-tags">
+
+                        <span>Landing Pages</span>
+                        <span>Sistemas</span>
+                        <span>IA</span>
+                        <span>Automações</span>
+
                     </div>
-                    <div class="footer-tech">
-                        Feito com <strong>HTML</strong> · <strong>CSS</strong> · <strong>JavaScript</strong> · <strong>OpenAI</strong> · <strong>Google Workspace</strong>
+
+
+                    <div class="hero-actions">
+
+                        <a
+                            href="#contato"
+                            class="btn btn-primary"
+                        >
+                            Vamos conversar
+                            <span>→</span>
+                        </a>
+
+
+                        <a
+                            href="#projetos"
+                            class="btn btn-secondary"
+                        >
+                            Ver projetos
+                        </a>
+
                     </div>
+
                 </div>
-                <div class="footer-col">
-                    <h4>Serviços</h4>
-                    <a href="#servicos">Landing Pages</a>
-                    <a href="#servicos">Sistemas Web</a>
-                    <a href="#servicos">Automações</a>
-                    <a href="#servicos">Inteligência Artificial</a>
+
+
+                <div class="hero-visual fade-up">
+
+                    <div class="visual-glow"></div>
+
+                    <div class="mockup-card">
+
+                        <div class="mockup-header">
+
+                            <div class="window-controls">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+
+                            <div class="mockup-label">
+                                NAF DIGITAL
+                            </div>
+
+                        </div>
+
+
+                        <div class="mockup-image">
+
+                            <img
+                                src="img/neurocombat-mockup.webp"
+                                alt="Projeto digital desenvolvido pela NAF Soluções Digitais"
+                                loading="eager"
+                            >
+
+                        </div>
+
+                    </div>
+
                 </div>
-                <div class="footer-col">
-                    <h4>Empresa</h4>
-                    <a href="#sobre">Sobre</a>
-                    <a href="#portfolio">Portfólio</a>
-                    <a href="#contato">Contato</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Contato</h4>
-                    <p>📧 contato@nafsolucoes.com</p>
-                    <p>📱 (11) 99999-9999</p>
-                    <p style="font-size:0.8rem; color:#3f3f46;">© 2026 NAF Soluções Digitais</p>
-                </div>
+
             </div>
-            <div class="footer-bottom">
-                <p>© 2026 <strong>NAF Soluções Digitais</strong> — Todos os direitos reservados.</p>
+
+        </section>
+
+
+        <!-- ==========================================
+             TECNOLOGIAS
+        =========================================== -->
+
+        <section class="tech-section">
+
+            <div class="container">
+
+                <p class="section-overline">
+                    TECNOLOGIAS & FERRAMENTAS
+                </p>
+
+                <div class="tech-list">
+
+                    <span>HTML5</span>
+                    <span>CSS3</span>
+                    <span>JavaScript</span>
+                    <span>PHP</span>
+                    <span>Python</span>
+                    <span>Firebase</span>
+                    <span>Apps Script</span>
+                    <span>GitHub</span>
+                    <span>Cloud</span>
+                    <span>OpenAI</span>
+
+                </div>
+
             </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             SERVIÇOS
+        =========================================== -->
+
+        <section
+            class="section"
+            id="servicos"
+        >
+
+            <div class="container">
+
+                <div class="section-heading fade-up">
+
+                    <span class="section-number">
+                        01
+                    </span>
+
+                    <div>
+                        <p class="section-overline">
+                            O QUE FAZEMOS
+                        </p>
+
+                        <h2>
+                            Tecnologia aplicada
+                            <span>ao seu negócio.</span>
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="services-grid">
+
+                    <article class="service-card fade-up">
+
+                        <div class="service-icon">
+                            ◇
+                        </div>
+
+                        <span class="service-number">
+                            01
+                        </span>
+
+                        <h3>
+                            Landing Pages
+                        </h3>
+
+                        <p>
+                            Páginas estratégicas desenvolvidas para
+                            apresentar produtos, serviços e gerar
+                            oportunidades.
+                        </p>
+
+                        <a href="#contato">
+                            Saiba mais →
+                        </a>
+
+                    </article>
+
+
+                    <article class="service-card fade-up">
+
+                        <div class="service-icon">
+                            ◫
+                        </div>
+
+                        <span class="service-number">
+                            02
+                        </span>
+
+                        <h3>
+                            Sites Institucionais
+                        </h3>
+
+                        <p>
+                            Presença digital profissional, responsiva,
+                            otimizada e alinhada à identidade da sua
+                            empresa.
+                        </p>
+
+                        <a href="#contato">
+                            Saiba mais →
+                        </a>
+
+                    </article>
+
+
+                    <article class="service-card fade-up">
+
+                        <div class="service-icon">
+                            ⌘
+                        </div>
+
+                        <span class="service-number">
+                            03
+                        </span>
+
+                        <h3>
+                            Sistemas Web
+                        </h3>
+
+                        <p>
+                            Sistemas personalizados para organizar
+                            processos, informações e operações.
+                        </p>
+
+                        <a href="#contato">
+                            Saiba mais →
+                        </a>
+
+                    </article>
+
+
+                    <article class="service-card fade-up">
+
+                        <div class="service-icon">
+                            ◎
+                        </div>
+
+                        <span class="service-number">
+                            04
+                        </span>
+
+                        <h3>
+                            Automações & IA
+                        </h3>
+
+                        <p>
+                            Integrações, automações e inteligência
+                            artificial para reduzir tarefas repetitivas
+                            e aumentar eficiência.
+                        </p>
+
+                        <a href="#contato">
+                            Saiba mais →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             PROJETOS
+        =========================================== -->
+
+        <section
+            class="section projects-section"
+            id="projetos"
+        >
+
+            <div class="container">
+
+                <div class="section-heading fade-up">
+
+                    <span class="section-number">
+                        02
+                    </span>
+
+                    <div>
+                        <p class="section-overline">
+                            PROJETOS
+                        </p>
+
+                        <h2>
+                            Alguns trabalhos
+                            <span>desenvolvidos.</span>
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="portfolio-grid">
+
+                    <article class="portfolio-card portfolio-large fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/neurocombat.webp"
+                                alt="NeuroCombat Academy"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                Website / Educação
+                            </span>
+
+                            <h3>
+                                NeuroCombat Academy
+                            </h3>
+
+                            <p>
+                                Plataforma digital para apresentação
+                                de cursos e soluções especializadas.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="portfolio-card fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/natalia.webp"
+                                alt="Projeto Natália Ferreira"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                Website
+                            </span>
+
+                            <h3>
+                                Natália Ferreira
+                            </h3>
+
+                            <p>
+                                Presença digital personalizada.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="portfolio-card fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/ambiental.webp"
+                                alt="Sistema Ambiental"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                Sistema Web
+                            </span>
+
+                            <h3>
+                                Sistema Ambiental
+                            </h3>
+
+                            <p>
+                                Solução para registro e organização
+                                de informações operacionais.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="portfolio-card fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/maze-game.webp"
+                                alt="Maze AI Game"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                IA / Game
+                            </span>
+
+                            <h3>
+                                Maze AI Game
+                            </h3>
+
+                            <p>
+                                Experimento digital envolvendo
+                                inteligência artificial e interação.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="portfolio-card fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/pre-laudo.webp"
+                                alt="Pré-Laudo de Aptidão Técnica"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                Sistema / Segurança
+                            </span>
+
+                            <h3>
+                                Pré-Laudo
+                            </h3>
+
+                            <p>
+                                Solução digital para organização
+                                de informações técnicas.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="portfolio-card fade-up">
+
+                        <div class="portfolio-image">
+
+                            <img
+                                src="img/dashboard.webp"
+                                alt="Dashboard Ambiental"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <span>
+                                Dashboard
+                            </span>
+
+                            <h3>
+                                Dashboard Ambiental
+                            </h3>
+
+                            <p>
+                                Visualização e organização de dados
+                                operacionais.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             BENEFÍCIOS
+        =========================================== -->
+
+        <section class="section benefits-section">
+
+            <div class="container">
+
+                <div class="section-heading fade-up">
+
+                    <span class="section-number">
+                        03
+                    </span>
+
+                    <div>
+                        <p class="section-overline">
+                            DIFERENCIAIS
+                        </p>
+
+                        <h2>
+                            Desenvolvido para
+                            <span>funcionar.</span>
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="benefits-grid">
+
+                    <div class="benefit-item fade-up">
+                        <strong>01</strong>
+                        <h3>Código limpo</h3>
+                        <p>
+                            Estrutura organizada e preparada para
+                            manutenção e evolução.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>02</strong>
+                        <h3>Performance</h3>
+                        <p>
+                            Desenvolvimento pensando em velocidade
+                            e experiência do usuário.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>03</strong>
+                        <h3>SEO</h3>
+                        <p>
+                            Estrutura preparada para mecanismos
+                            de busca.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>04</strong>
+                        <h3>Inteligência Artificial</h3>
+                        <p>
+                            IA aplicada quando realmente agrega
+                            valor ao projeto.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>05</strong>
+                        <h3>Design</h3>
+                        <p>
+                            Interfaces modernas, responsivas e
+                            alinhadas ao objetivo do projeto.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>06</strong>
+                        <h3>Suporte</h3>
+                        <p>
+                            Acompanhamento para manutenção e
+                            evolução da solução.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>07</strong>
+                        <h3>Segurança</h3>
+                        <p>
+                            Boas práticas de desenvolvimento e
+                            proteção das informações.
+                        </p>
+                    </div>
+
+
+                    <div class="benefit-item fade-up">
+                        <strong>08</strong>
+                        <h3>Escalabilidade</h3>
+                        <p>
+                            Projetos preparados para crescer
+                            conforme a necessidade.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             PROCESSO
+        =========================================== -->
+
+        <section class="section process-section">
+
+            <div class="container">
+
+                <div class="section-heading fade-up">
+
+                    <span class="section-number">
+                        04
+                    </span>
+
+                    <div>
+                        <p class="section-overline">
+                            PROCESSO
+                        </p>
+
+                        <h2>
+                            Da ideia à
+                            <span>solução.</span>
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="timeline">
+
+                    <div class="timeline-item fade-up">
+
+                        <span>01</span>
+
+                        <div>
+                            <h3>Briefing</h3>
+                            <p>
+                                Entendemos o problema, os objetivos
+                                e as necessidades do projeto.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item fade-up">
+
+                        <span>02</span>
+
+                        <div>
+                            <h3>Planejamento</h3>
+                            <p>
+                                Definimos estrutura, tecnologias,
+                                funcionalidades e prioridades.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item fade-up">
+
+                        <span>03</span>
+
+                        <div>
+                            <h3>Design</h3>
+                            <p>
+                                Criamos a experiência visual e
+                                estrutural da solução.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item fade-up">
+
+                        <span>04</span>
+
+                        <div>
+                            <h3>Desenvolvimento</h3>
+                            <p>
+                                Transformamos o planejamento em
+                                uma solução funcional.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item fade-up">
+
+                        <span>05</span>
+
+                        <div>
+                            <h3>Entrega</h3>
+                            <p>
+                                Realizamos testes e disponibilizamos
+                                o projeto.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item fade-up">
+
+                        <span>06</span>
+
+                        <div>
+                            <h3>Suporte</h3>
+                            <p>
+                                Acompanhamos a evolução da solução
+                                após a entrega.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             SOBRE
+        =========================================== -->
+
+        <section
+            class="section about-section"
+            id="sobre"
+        >
+
+            <div class="container about-grid">
+
+                <div class="about-content fade-up">
+
+                    <p class="section-overline">
+                        SOBRE A NAF
+                    </p>
+
+                    <h2>
+                        Tecnologia aplicada
+                        para resolver
+                        <span>problemas reais.</span>
+                    </h2>
+
+                    <p>
+                        A NAF Soluções Digitais desenvolve soluções
+                        digitais personalizadas para pessoas, empresas
+                        e projetos que precisam transformar ideias em
+                        ferramentas funcionais.
+                    </p>
+
+                    <p>
+                        Nosso trabalho combina desenvolvimento,
+                        automação, inteligência artificial, design e
+                        análise de processos.
+                    </p>
+
+
+                    <ul class="about-list">
+
+                        <li>
+                            <span>✓</span>
+                            Soluções personalizadas
+                        </li>
+
+                        <li>
+                            <span>✓</span>
+                            Desenvolvimento responsivo
+                        </li>
+
+                        <li>
+                            <span>✓</span>
+                            Automação de processos
+                        </li>
+
+                        <li>
+                            <span>✓</span>
+                            Integração com inteligência artificial
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="about-card fade-up">
+
+                    <div class="about-card-glow"></div>
+
+                    <img
+                        src="img/logo-naf.svg"
+                        alt="NAF Soluções Digitais"
+                    >
+
+                    <span>
+                        SOLUÇÕES DIGITAIS
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             CONTATO
+        =========================================== -->
+
+        <section
+            class="section contact-section"
+            id="contato"
+        >
+
+            <div class="container contact-grid">
+
+                <div class="contact-content fade-up">
+
+                    <p class="section-overline">
+                        VAMOS CONVERSAR
+                    </p>
+
+                    <h2>
+                        Tem uma ideia?
+                        <span>Vamos transformar.</span>
+                    </h2>
+
+                    <p>
+                        Conte um pouco sobre o que você precisa.
+                        Vamos analisar sua ideia e entender como
+                        podemos transformar isso em uma solução.
+                    </p>
+
+
+                    <div class="contact-details">
+
+                        <a href="mailto:contato@nafsolucoes.com">
+                            <span>✉</span>
+                            contato@nafsolucoes.com
+                        </a>
+
+                        <a
+                            href="https://wa.me/5524999599347"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span>◉</span>
+                            (24) 99959-9347
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="contact-form-wrapper fade-up">
+
+                    <form
+                        id="contactForm"
+                        novalidate
+                    >
+
+                        <div class="form-group">
+
+                            <label for="nome">
+                                Nome
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nome"
+                                name="nome"
+                                placeholder="Seu nome"
+                                autocomplete="name"
+                                maxlength="100"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+
+                                <label for="email">
+                                    E-mail
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="seu@email.com"
+                                    autocomplete="email"
+                                    maxlength="150"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="telefone">
+                                    Telefone
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="telefone"
+                                    name="telefone"
+                                    placeholder="(24) 99999-9999"
+                                    autocomplete="tel"
+                                    maxlength="20"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Honeypot anti-spam -->
+                        <div
+                            class="honeypot"
+                            aria-hidden="true"
+                        >
+
+                            <label for="website">
+                                Website
+                            </label>
+
+                            <input
+                                type="text"
+                                id="website"
+                                name="website"
+                                tabindex="-1"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="mensagem">
+                                Mensagem
+                            </label>
+
+                            <textarea
+                                id="mensagem"
+                                name="mensagem"
+                                placeholder="Conte um pouco sobre seu projeto..."
+                                maxlength="2000"
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-submit"
+                            id="submitButton"
+                        >
+                            Enviar mensagem
+                            <span>→</span>
+                        </button>
+
+
+                        <div
+                            id="formStatus"
+                            class="form-status"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer>
+
+        <div class="container footer-content">
+
+            <div class="footer-brand">
+
+                <img
+                    src="img/logo-naf.svg"
+                    alt="NAF Soluções Digitais"
+                >
+
+                <p>
+                    Tecnologia para transformar ideias
+                    em soluções digitais.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="#inicio">
+                    Início
+                </a>
+
+                <a href="#servicos">
+                    Serviços
+                </a>
+
+                <a href="#projetos">
+                    Projetos
+                </a>
+
+                <a href="#sobre">
+                    Sobre
+                </a>
+
+                <a href="#contato">
+                    Contato
+                </a>
+
+            </div>
+
+
+            <div class="footer-contact">
+
+                <a href="mailto:contato@nafsolucoes.com">
+                    contato@nafsolucoes.com
+                </a>
+
+                <a
+                    href="https://wa.me/5524999599347"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    WhatsApp
+                </a>
+
+            </div>
+
         </div>
+
+
+        <div class="container footer-bottom">
+
+            <p>
+                © 2026 NAF Soluções Digitais.
+                Todos os direitos reservados.
+            </p>
+
+            <p>
+                Desenvolvido pela NAF Soluções Digitais.
+            </p>
+
+        </div>
+
     </footer>
 
-    <!-- WHATSAPP -->
-    <a href="https://wa.me/5511999999999" class="whatsapp" target="_blank" aria-label="WhatsApp">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+
+    <!-- ==========================================
+         WHATSAPP
+    =========================================== -->
+
+    <a
+        href="https://wa.me/5524999599347"
+        class="whatsapp-float"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Falar com a NAF Soluções Digitais pelo WhatsApp"
+    >
+        <span>◉</span>
     </a>
 
-    <!-- SCRIPTS -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
 
-            // ---- LOADER ----
-            const loader = document.getElementById('loader');
-            window.addEventListener('load', function () {
-                setTimeout(function () {
-                    loader.classList.add('hidden');
-                }, 900);
-            });
-
-            // ---- MOUSE GLOW ----
-            const glow = document.getElementById('mouse-glow');
-            let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
-            document.addEventListener('mousemove', function (e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-            function animateGlow() {
-                glowX += (mouseX - glowX) * 0.12;
-                glowY += (mouseY - glowY) * 0.12;
-                glow.style.left = glowX + 'px';
-                glow.style.top = glowY + 'px';
-                requestAnimationFrame(animateGlow);
-            }
-            animateGlow();
-
-            // ---- PARTICLES ----
-            const canvas = document.getElementById('particles-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            let w, h;
-
-            function resizeCanvas() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * w;
-                    this.y = Math.random() * h;
-                    this.size = Math.random() * 1.8 + 0.4;
-                    this.speedX = (Math.random() - 0.5) * 0.25;
-                    this.speedY = (Math.random() - 0.5) * 0.25;
-                    this.opacity = Math.random() * 0.25 + 0.05;
-                }
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    if (this.x < 0 || this.x > w) this.speedX *= -1;
-                    if (this.y < 0 || this.y > h) this.speedY *= -1;
-                }
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
-                    ctx.fill();
-                }
-            }
-
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle());
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, w, h);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animateParticles);
-            }
-            animateParticles();
-
-            // ---- NAVBAR SCROLL ----
-            const header = document.querySelector('header');
-            window.addEventListener('scroll', function () {
-                if (window.scrollY > 60) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-
-            // ---- FORM ----
-            const form = document.getElementById('formContato');
-            const statusDiv = document.getElementById('formStatus');
-            const btnEnviar = document.getElementById('btnEnviar');
-
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
-
-                const nome = document.getElementById('nome').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const telefone = document.getElementById('telefone').value.trim();
-                const mensagem = document.getElementById('mensagem').value.trim();
-
-                if (!nome || !email || !mensagem) {
-                    statusDiv.className = 'form-status error';
-                    statusDiv.textContent = 'Preencha todos os campos obrigatórios.';
-                    return;
-                }
-
-                statusDiv.className = 'form-status loading';
-                statusDiv.textContent = 'Enviando mensagem...';
-                btnEnviar.disabled = true;
-                btnEnviar.textContent = 'Enviando...';
-
-                try {
-                    const response = await fetch('https://formsubmit.co/ajax/seuemail@dominio.com', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: nome,
-                            email: email,
-                            phone: telefone,
-                            message: mensagem,
-                            _subject: 'Novo contato - NAF Soluções Digitais',
-                            _captcha: 'false'
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        statusDiv.className = 'form-status success';
-                        statusDiv.textContent = '✅ Mensagem enviada com sucesso! Entraremos em contato em breve.';
-                        form.reset();
-                    } else {
-                        throw new Error(data.message || 'Erro ao enviar.');
-                    }
-                } catch (error) {
-                    statusDiv.className = 'form-status error';
-                    statusDiv.textContent = '❌ Erro ao enviar. Tente novamente ou entre em contato diretamente.';
-                    console.error('Erro:', error);
-                } finally {
-                    btnEnviar.disabled = false;
-                    btnEnviar.textContent = 'Enviar mensagem →';
-                }
-            });
-
-            // ---- FADE-UP (Intersection Observer) ----
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-            document.querySelectorAll('.fade-up').forEach(el => {
-                observer.observe(el);
-            });
-        });
-    </script>
+    <script src="js/script.js"></script>
 
 </body>
 </html>
