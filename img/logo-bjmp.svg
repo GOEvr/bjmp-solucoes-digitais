@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
+  <title id="title">BJMP Soluções Digitais</title>
+  <desc id="desc">Logotipo horizontal da BJMP Soluções Digitais em azul, ciano, branco e azul-noite.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020712"/>
+      <stop offset=".52" stop-color="#03152d"/>
+      <stop offset="1" stop-color="#00040b"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#0055ff"/>
+      <stop offset=".55" stop-color="#00aaff"/>
+      <stop offset="1" stop-color="#13d9ff"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".5" stop-color="#dfe5ed"/>
+      <stop offset="1" stop-color="#aeb8c6"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="620" rx="24" fill="url(#bg)"/>
+
+  <!-- subtle blue ambient glow -->
+  <ellipse cx="500" cy="430" rx="480" ry="100" fill="#006eff" opacity=".10" filter="url(#soft)"/>
+
+  <!-- orbital swoosh -->
+  <path d="M92 425 C185 575 585 590 840 470 C590 505 260 525 132 410 C102 383 88 397 92 425Z"
+        fill="url(#blue)" opacity=".95" filter="url(#glow)"/>
+  <path d="M470 214 C665 55 945 82 1005 220 C1028 272 1003 323 960 354
+           C1002 246 946 177 826 154 C705 131 594 151 470 214Z"
+        fill="url(#blue)" opacity=".96" filter="url(#glow)"/>
+
+  <!-- BJMP monogram -->
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="300" letter-spacing="-24">
+    <text x="92" y="405" fill="url(#silver)">B</text>
+    <text x="342" y="405" fill="url(#blue)">J</text>
+    <text x="500" y="405" fill="url(#silver)">N</text>
+    <text x="770" y="405" fill="url(#silver)">P</text>
+  </g>
+
+  <!-- blue geometric accent inside N -->
+  <path d="M665 244 L725 310 L690 350 L628 285 Z" fill="url(#blue)"/>
+  <path d="M690 350 L748 285 L780 320 L720 382 Z" fill="#08d8ff" opacity=".85"/>
+
+  <!-- separator -->
+  <rect x="1030" y="185" width="4" height="235" rx="2" fill="url(#blue)" filter="url(#glow)"/>
+
+  <!-- company name -->
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="12">
+    <text x="1090" y="285" font-size="78" fill="#ffffff">SOLUÇÕES</text>
+    <text x="1090" y="375" font-size="78" fill="url(#blue)">DIGITAIS</text>
+  </g>
+
+  <!-- tagline -->
+  <g font-family="Arial, Helvetica, sans-serif" letter-spacing="5">
+    <text x="1093" y="430" font-size="27" fill="#e5e9ef">IDEIAS QUE CONSTROEM RESULTADOS</text>
+  </g>
+
+  <!-- small divider accents -->
+  <rect x="1092" y="455" width="120" height="2" fill="#4d637e"/>
+  <rect x="1440" y="455" width="120" height="2" fill="#4d637e"/>
+</svg>
