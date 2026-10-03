@@ -48,11 +48,14 @@ function initLoader() {
 
         window.setTimeout(() => {
 
-            loader.classList.add('loaded');
+            // CSS usa #loader.hidden para o fade-out
+            loader.classList.add('hidden');
 
             window.setTimeout(() => {
-                loader.remove();
-            }, 700);
+                if (loader.parentNode) {
+                    loader.remove();
+                }
+            }, 600);
 
         }, 250);
 
@@ -115,11 +118,16 @@ function initMobileMenu() {
 
     toggle.addEventListener('click', () => {
 
+        // Toggle do ícone hamburger
         const isOpen =
             toggle.classList.toggle('active');
 
-        menu.classList.toggle(
-            'active',
+        // CSS mobile espera .nav.open (não .active)
+        menu.classList.toggle('open', isOpen);
+
+        // Trava o scroll do body com menu aberto
+        document.body.classList.toggle(
+            'menu-open',
             isOpen
         );
 
@@ -169,7 +177,7 @@ function initMobileMenu() {
 
             if (
                 event.key === 'Escape' &&
-                menu.classList.contains('active')
+                menu.classList.contains('open')
             ) {
 
                 closeMobileMenu(
@@ -195,8 +203,8 @@ function initMobileMenu() {
         () => {
 
             if (
-                window.innerWidth > 768 &&
-                menu.classList.contains('active')
+                window.innerWidth > 900 &&
+                menu.classList.contains('open')
             ) {
 
                 closeMobileMenu(
@@ -221,8 +229,8 @@ function closeMobileMenu(
 ) {
 
     toggle.classList.remove('active');
-
-    menu.classList.remove('active');
+    menu.classList.remove('open');
+    document.body.classList.remove('menu-open');
 
     toggle.setAttribute(
         'aria-expanded',
