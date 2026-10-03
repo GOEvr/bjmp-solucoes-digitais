@@ -1,5 +1,5 @@
 /* =========================================================
-   NAF SOLUÇÕES DIGITAIS
+   BJMP SOLUÇÕES DIGITAIS
    script.js
 ========================================================= */
 
@@ -48,13 +48,14 @@ function initLoader() {
 
         window.setTimeout(() => {
 
-            // CSS usa #loader.hidden para o fade-out
             loader.classList.add('hidden');
 
             window.setTimeout(() => {
+
                 if (loader.parentNode) {
                     loader.remove();
                 }
+
             }, 600);
 
         }, 250);
@@ -79,9 +80,13 @@ function initHeader() {
     const updateHeader = () => {
 
         if (window.scrollY > 40) {
+
             header.classList.add('scrolled');
+
         } else {
+
             header.classList.remove('scrolled');
+
         }
 
     };
@@ -118,14 +123,14 @@ function initMobileMenu() {
 
     toggle.addEventListener('click', () => {
 
-        // Toggle do ícone hamburger
         const isOpen =
             toggle.classList.toggle('active');
 
-        // CSS mobile espera .nav.open (não .active)
-        menu.classList.toggle('open', isOpen);
+        menu.classList.toggle(
+            'open',
+            isOpen
+        );
 
-        // Trava o scroll do body com menu aberto
         document.body.classList.toggle(
             'menu-open',
             isOpen
@@ -146,10 +151,6 @@ function initMobileMenu() {
     });
 
 
-    /*
-     * Fecha o menu ao clicar em um link.
-     */
-
     const links =
         menu.querySelectorAll('a');
 
@@ -166,10 +167,6 @@ function initMobileMenu() {
 
     });
 
-
-    /*
-     * Fecha com ESC.
-     */
 
     document.addEventListener(
         'keydown',
@@ -192,11 +189,6 @@ function initMobileMenu() {
         }
     );
 
-
-    /*
-     * Fecha se o usuário aumentar
-     * a janela para desktop.
-     */
 
     window.addEventListener(
         'resize',
@@ -229,8 +221,12 @@ function closeMobileMenu(
 ) {
 
     toggle.classList.remove('active');
+
     menu.classList.remove('open');
-    document.body.classList.remove('menu-open');
+
+    document.body.classList.remove(
+        'menu-open'
+    );
 
     toggle.setAttribute(
         'aria-expanded',
@@ -282,7 +278,9 @@ function initSmoothScroll() {
                         );
 
                 } catch {
+
                     return;
+
                 }
 
                 if (!target) {
@@ -323,10 +321,6 @@ function initRevealAnimation() {
     }
 
 
-    /*
-     * Usuário prefere reduzir animações.
-     */
-
     if (prefersReducedMotion()) {
 
         elements.forEach(element => {
@@ -340,11 +334,6 @@ function initRevealAnimation() {
         return;
     }
 
-
-    /*
-     * Fallback para navegadores
-     * sem IntersectionObserver.
-     */
 
     if (
         !('IntersectionObserver' in window)
@@ -385,17 +374,26 @@ function initRevealAnimation() {
             },
             {
                 threshold: 0.08,
-                rootMargin: '0px 0px -20px 0px'
+                rootMargin:
+                    '0px 0px -20px 0px'
             }
         );
 
 
     elements.forEach(element => {
 
-        // Já visível na tela no carregamento
-        const rect = element.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.92) {
-            element.classList.add('visible');
+        const rect =
+            element.getBoundingClientRect();
+
+        if (
+            rect.top <
+            window.innerHeight * 0.92
+        ) {
+
+            element.classList.add(
+                'visible'
+            );
+
             return;
         }
 
@@ -407,7 +405,7 @@ function initRevealAnimation() {
 
 
 /* =========================================================
-   IMAGENS QUEBRADAS — fallback visual
+   IMAGENS QUEBRADAS
 ========================================================= */
 
 function initBrokenImages() {
@@ -416,14 +414,29 @@ function initBrokenImages() {
         '.portfolio-image img, .mockup-image img, .hero-visual img'
     ).forEach(img => {
 
-        if (img.complete && img.naturalWidth === 0) {
-            img.classList.add('broken');
+        if (
+            img.complete &&
+            img.naturalWidth === 0
+        ) {
+
+            img.classList.add(
+                'broken'
+            );
+
             return;
+
         }
 
-        img.addEventListener('error', function () {
-            this.classList.add('broken');
-        });
+        img.addEventListener(
+            'error',
+            function () {
+
+                this.classList.add(
+                    'broken'
+                );
+
+            }
+        );
 
     });
 
@@ -458,24 +471,30 @@ function initContactForm() {
         );
 
 
-    /*
-     * Elementos do formulário.
-     */
-
     const nameInput =
-        document.getElementById('nome');
+        document.getElementById(
+            'nome'
+        );
 
     const emailInput =
-        document.getElementById('email');
+        document.getElementById(
+            'email'
+        );
 
     const phoneInput =
-        document.getElementById('telefone');
+        document.getElementById(
+            'telefone'
+        );
 
     const messageInput =
-        document.getElementById('mensagem');
+        document.getElementById(
+            'mensagem'
+        );
 
     const honeypot =
-        document.getElementById('website');
+        document.getElementById(
+            'website'
+        );
 
 
     form.addEventListener(
@@ -485,26 +504,18 @@ function initContactForm() {
             event.preventDefault();
 
 
-            /*
-             * Evita duplo envio.
-             */
-
             if (
-                form.dataset.submitting === 'true'
+                form.dataset.submitting ===
+                'true'
             ) {
+
                 return;
+
             }
 
 
             clearFormStatus(status);
 
-
-            /*
-             * Honeypot anti-spam.
-             *
-             * Não informamos ao visitante
-             * que o mecanismo foi acionado.
-             */
 
             if (
                 honeypot &&
@@ -520,12 +531,9 @@ function initContactForm() {
                 form.reset();
 
                 return;
+
             }
 
-
-            /*
-             * Captura e normalização.
-             */
 
             const name =
                 normalizeInput(
@@ -548,13 +556,6 @@ function initContactForm() {
                 );
 
 
-            /*
-             * Validação client-side.
-             *
-             * A validação definitiva deve
-             * permanecer no servidor.
-             */
-
             if (!validateName(name)) {
 
                 showFormStatus(
@@ -566,6 +567,7 @@ function initContactForm() {
                 nameInput?.focus();
 
                 return;
+
             }
 
 
@@ -580,12 +582,11 @@ function initContactForm() {
                 emailInput?.focus();
 
                 return;
+
             }
 
 
-            if (
-                phone.length > 30
-            ) {
+            if (phone.length > 30) {
 
                 showFormStatus(
                     status,
@@ -596,6 +597,7 @@ function initContactForm() {
                 phoneInput?.focus();
 
                 return;
+
             }
 
 
@@ -613,14 +615,12 @@ function initContactForm() {
                 messageInput?.focus();
 
                 return;
+
             }
 
 
-            /*
-             * Prepara envio.
-             */
-
-            form.dataset.submitting = 'true';
+            form.dataset.submitting =
+                'true';
 
             setSubmitState(
                 submitButton,
@@ -662,10 +662,6 @@ function initContactForm() {
                         }
                     );
 
-
-                /*
-                 * Tenta interpretar JSON.
-                 */
 
                 let result = null;
 
@@ -710,13 +706,6 @@ function initContactForm() {
 
             } catch (error) {
 
-                /*
-                 * Log apenas no console.
-                 *
-                 * Detalhes internos não são
-                 * exibidos ao visitante.
-                 */
-
                 console.error(
                     'Falha no envio do formulário:',
                     error
@@ -756,7 +745,9 @@ function normalizeInput(value) {
         value === null ||
         value === undefined
     ) {
+
         return '';
+
     }
 
     return String(value)
@@ -803,13 +794,6 @@ function validateEmail(email) {
         return false;
     }
 
-    /*
-     * Validação básica para UX.
-     *
-     * A validação definitiva permanece
-     * no servidor.
-     */
-
     const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -831,11 +815,6 @@ function showFormStatus(
     if (!element) {
         return;
     }
-
-    /*
-     * textContent evita interpretação
-     * de conteúdo como HTML.
-     */
 
     element.textContent =
         String(message);
@@ -926,18 +905,17 @@ function initMouseGlow() {
         return;
     }
 
-    /*
-     * Não executa o efeito em dispositivos
-     * sem apontador preciso.
-     */
 
     if (
         !window.matchMedia(
             '(pointer: fine)'
         ).matches
     ) {
+
         return;
+
     }
+
 
     if (prefersReducedMotion()) {
         return;
@@ -997,6 +975,7 @@ function initParticles() {
         return;
     }
 
+
     if (prefersReducedMotion()) {
         return;
     }
@@ -1029,12 +1008,14 @@ function initParticles() {
 
         canvas.width =
             Math.floor(
-                window.innerWidth * ratio
+                window.innerWidth *
+                ratio
             );
 
         canvas.height =
             Math.floor(
-                window.innerHeight * ratio
+                window.innerHeight *
+                ratio
             );
 
         canvas.style.width =
@@ -1058,6 +1039,7 @@ function initParticles() {
     function createParticle() {
 
         return {
+
             x:
                 Math.random() *
                 window.innerWidth,
@@ -1074,6 +1056,7 @@ function initParticles() {
 
             opacity:
                 Math.random() * 0.35 + 0.05
+
         };
 
     }
