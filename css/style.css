@@ -202,7 +202,8 @@ ol {
         visibility 0.5s ease;
 }
 
-#loader.hidden {
+#loader.hidden,
+#loader.loaded {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -218,6 +219,35 @@ ol {
 .loader-logo {
     width: 70px;
     height: auto;
+}
+
+.loader-line {
+    width: 72px;
+    height: 2px;
+    margin-top: 18px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--blue),
+        transparent
+    );
+    animation: loaderLine 1.1s ease-in-out infinite;
+}
+
+@keyframes loaderLine {
+    0%   { transform: translateX(-120%); }
+    100% { transform: translateX(280%); }
 }
 
 .loader-spinner {
@@ -1548,7 +1578,8 @@ footer {
         overflow-y: auto;
     }
 
-    .nav.open {
+    .nav.open,
+    .nav.active {
         transform: translateX(0);
     }
 
