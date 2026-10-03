@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScroll();
     initRevealAnimation();
+    initBrokenImages();
     initContactForm();
     initMouseGlow();
     initParticles();
@@ -375,15 +376,46 @@ function initRevealAnimation() {
 
             },
             {
-                threshold: 0.12,
-                rootMargin: '0px 0px -40px 0px'
+                threshold: 0.08,
+                rootMargin: '0px 0px -20px 0px'
             }
         );
 
 
     elements.forEach(element => {
 
+        // Já visível na tela no carregamento
+        const rect = element.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.92) {
+            element.classList.add('visible');
+            return;
+        }
+
         observer.observe(element);
+
+    });
+
+}
+
+
+/* =========================================================
+   IMAGENS QUEBRADAS — fallback visual
+========================================================= */
+
+function initBrokenImages() {
+
+    document.querySelectorAll(
+        '.portfolio-image img, .mockup-image img, .hero-visual img'
+    ).forEach(img => {
+
+        if (img.complete && img.naturalWidth === 0) {
+            img.classList.add('broken');
+            return;
+        }
+
+        img.addEventListener('error', function () {
+            this.classList.add('broken');
+        });
 
     });
 
