@@ -1,0 +1,286 @@
+# ============================================================
+# BJMP SOLUÇÕES DIGITAIS
+# .htaccess — PRODUÇÃO
+# https://www.bjmpsolucoes.com.br/
+# ============================================================
+
+
+# ============================================================
+# 1. DESABILITAR LISTAGEM DE DIRETÓRIOS
+# ============================================================
+
+Options -Indexes
+
+
+# ============================================================
+# 2. URL CANÔNICA
+#
+# Força:
+# http://bjmpsolucoes.com.br
+# http://www.bjmpsolucoes.com.br
+# https://bjmpsolucoes.com.br
+#
+# para:
+# https://www.bjmpsolucoes.com.br
+# ============================================================
+
+RewriteEngine On
+
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^www\.bjmpsolucoes\.com\.br$ [NC]
+RewriteRule ^ https://www.bjmpsolucoes.com.br%{REQUEST_URI} [R=301,L]
+
+
+# ============================================================
+# 3. BLOQUEAR ACESSO DIRETO A ARQUIVOS SENSÍVEIS
+# ============================================================
+
+<FilesMatch "(^\.|\.env$|\.ini$|\.log$|\.sql$|\.sqlite$|\.sqlite3$|\.bak$|\.backup$|\.old$|\.orig$|\.save$|\.swp$|\.tmp$|\.dist$|composer\.(json|lock)$|package(-lock)?\.json$)">
+    Require all denied
+</FilesMatch>
+
+
+# ============================================================
+# 4. BLOQUEAR DIRETÓRIOS E ARQUIVOS DE CONTROLE
+# ============================================================
+
+RewriteRule ^(?:\.git|\.github)(?:/|$) - [F,L,NC]
+
+RewriteRule ^(?:composer\.(?:json|lock)|package(?:-lock)?\.json)$ - [F,L,NC]
+
+RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
+
+
+# ============================================================
+# 5. PROTEGER O PRÓPRIO .HTACCESS
+# ============================================================
+
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+
+# ============================================================
+# 6. PROTEGER ARQUIVOS DE CONFIGURAÇÃO COMUNS
+# ============================================================
+
+<FilesMatch "\.(?:conf|config|cfg|ini|env|dist|bak|backup|old|orig|save|swp|sql|sqlite|sqlite3|log)$">
+    Require all denied
+</FilesMatch>
+
+
+# ============================================================
+# 7. HEADERS DE SEGURANÇA
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    # Impede que o navegador tente interpretar um tipo MIME
+    # diferente daquele declarado pelo servidor.
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Proteção contra carregamento da página em iframe
+    # por outros sites.
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Política de referência.
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Reduz vetores relacionados a recursos e APIs
+    # desnecessárias do navegador.
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+    # Desabilita o FLoC/Topics em navegadores que respeitem
+    # este mecanismo legado.
+    Header always set Permissions-Policy "interest-cohort=()"
+
+    # Impede cache de respostas da API de contato.
+    <Files "contact.php">
+        Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header always set Pragma "no-cache"
+    </Files>
+
+</IfModule>
+
+
+# ============================================================
+# 8. HSTS
+#
+# ATENÇÃO:
+# Só utilizar se o domínio já estiver funcionando corretamente
+# em HTTPS.
+#
+# O navegador passará a exigir HTTPS para o domínio.
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+</IfModule>
+
+
+# ============================================================
+# 9. CACHE DE ARQUIVOS ESTÁTICOS
+# ============================================================
+
+<IfModule mod_expires.c>
+
+    ExpiresActive On
+
+    # HTML
+    ExpiresByType text/html "access plus 0 seconds"
+
+    # CSS
+    ExpiresByType text/css "access plus 7 days"
+
+    # JavaScript
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType text/javascript "access plus 7 days"
+
+    # Imagens
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/gif "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/x-icon "access plus 30 days"
+
+    # Fontes
+    ExpiresByType font/woff "access plus 30 days"
+    ExpiresByType font/woff2 "access plus 30 days"
+    ExpiresByType application/font-woff "access plus 30 days"
+    ExpiresByType application/font-woff2 "access plus 30 days"
+
+    # Manifest
+    ExpiresByType application/manifest+json "access plus 7 days"
+
+</IfModule>
+
+
+# ============================================================
+# 10. CACHE-CONTROL PARA ARQUIVOS ESTÁTICOS
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    <FilesMatch "\.(?:css|js|jpg|jpeg|png|gif|webp|svg|ico|woff|woff2)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+
+</IfModule>
+
+
+# ============================================================
+# 11. NÃO CACHEAR A API DE CONTATO
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    <Files "contact.php">
+        Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header always set Pragma "no-cache"
+        Header always set Expires "0"
+    </Files>
+
+</IfModule>
+
+
+# ============================================================
+# 12. BLOQUEAR MÉTODOS HTTP DESNECESSÁRIOS
+#
+# O site é essencialmente GET/HEAD.
+# A API de contato precisa aceitar POST.
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteCond %{REQUEST_METHOD} ^(?:TRACE|TRACK|CONNECT)$ [NC]
+    RewriteRule ^ - [F,L]
+
+</IfModule>
+
+
+# ============================================================
+# 13. BLOQUEAR ACESSO À PASTA /api/ EXCETO contact.php
+#
+# A API continua acessível para o formulário:
+#
+# /api/contact.php
+#
+# Outros arquivos eventualmente colocados em /api/ ficam
+# protegidos.
+# ============================================================
+
+RewriteRule ^api/(?!contact\.php$).* - [F,L,NC]
+
+
+# ============================================================
+# 14. IMPEDIR EXECUÇÃO DE ARQUIVOS INESPERADOS NA PASTA
+# /img/
+#
+# SVG, imagens e demais arquivos estáticos continuam normais.
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteRule ^img/.*\.(?:php|phtml|pht|phar|cgi|pl|py|sh)$ - [F,L,NC]
+
+</IfModule>
+
+
+# ============================================================
+# 15. PROTEGER ARQUIVOS DE BACKUP E DESENVOLVIMENTO
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteRule \.(?:bak|backup|old|orig|save|swp|tmp)$ - [F,L,NC]
+
+</IfModule>
+
+
+# ============================================================
+# 16. COMPACTAÇÃO GZIP / DEFLATE
+# ============================================================
+
+<IfModule mod_deflate.c>
+
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+
+</IfModule>
+
+
+# ============================================================
+# 17. MIME TYPES
+# ============================================================
+
+<IfModule mod_mime.c>
+
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+    AddType application/manifest+json .webmanifest
+
+</IfModule>
+
+
+# ============================================================
+# 18. PÁGINA 404
+# ============================================================
+
+ErrorDocument 404 /index.html
+
+
+# ============================================================
+# FIM DO .HTACCESS
+# BJMP SOLUÇÕES DIGITAIS
+# ============================================================
