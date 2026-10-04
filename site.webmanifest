@@ -1,0 +1,19 @@
+{
+  "name": "BJMP Soluções Digitais",
+  "short_name": "BJMP",
+  "description": "Sites, sistemas web, automações e soluções com inteligência artificial.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050b18",
+  "theme_color": "#071b38",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/img/icon-bjmp.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
