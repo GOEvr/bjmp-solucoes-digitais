@@ -8,18 +8,20 @@ declare(strict_types=1);
  *
  * PHP 8.1+
  *
- * Segurança:
+ * Controles:
  * - somente POST
- * - Content-Type JSON
+ * - somente JSON
  * - validação Origin/Referer
- * - validação JSON
+ * - HTTPS + domínio autorizado
  * - limite de payload
  * - validação dos campos
  * - honeypot
- * - rate limiting
+ * - limpeza de caracteres de controle
  * - proteção contra header injection
- * - e-mail em texto simples
- * - respostas genéricas ao cliente
+ * - rate limiting com flock()
+ * - fail-closed no rate limiting
+ * - respostas genéricas
+ * - nenhum segredo exposto
  */
 
 
@@ -27,23 +29,21 @@ declare(strict_types=1);
    CONFIGURAÇÃO
 ========================================================= */
 
-/*
- * IMPORTANTE:
- *
- * Substitua os três valores abaixo pelos dados reais
- * do novo domínio/e-mail da BJMP.
- */
+const SITE_HOST = 'www.bjmpsolucoes.com.br';
 
-const SITE_HOST = 'SEU-DOMINIO-AQUI.COM';
+const MAIL_TO = 'contato@bjmpsolucoes.com.br';
 
-const MAIL_TO = 'SEU-EMAIL-AQUI@DOMINIO.COM';
-
-const MAIL_FROM = 'SEU-EMAIL-AQUI@DOMINIO.COM';
+const MAIL_FROM = 'contato@bjmpsolucoes.com.br';
 
 
 /* =========================================================
    RATE LIMIT
 ========================================================= */
+
+/*
+ * Máximo de 5 tentativas por IP
+ * dentro de uma janela de 10 minutos.
+ */
 
 const RATE_LIMIT_MAX = 5;
 
@@ -53,6 +53,8 @@ const RATE_LIMIT_WINDOW = 600;
 /* =========================================================
    LIMITES
 ========================================================= */
+
+const MAX_BODY_BYTES = 12288;
 
 const MAX_NAME_LENGTH = 100;
 
@@ -70,12 +72,12 @@ const MIN_MESSAGE_LENGTH = 10;
 ========================================================= */
 
 function respond(
-    int $statusCode,
+    int $status,
     bool $success,
     string $message
 ): never {
 
-    http_response_code($statusCode);
+    http_response_code($status);
 
     header(
         'Content-Type: application/json; charset=UTF-8'
@@ -131,6 +133,8 @@ if (
     ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST'
 ) {
 
+    header('Allow: POST');
+
     respond(
         405,
         false,
@@ -139,15 +143,23 @@ if (
 
 }
 
-header('Allow: POST');
-
 
 /* =========================================================
    CONTENT-TYPE
 ========================================================= */
 
 $contentType =
-    $_SERVER['CONTENT_TYPE'] ?? '';
+    trim(
+        (string)($_SERVER['CONTENT_TYPE'] ?? '')
+    );
+
+
+/*
+ * Aceita:
+ *
+ * application/json
+ * application/json; charset=UTF-8
+ */
 
 if (
     stripos(
@@ -166,20 +178,35 @@ if (
 
 
 /* =========================================================
+   HOST AUTORIZADO
+========================================================= */
+
+function allowedHost(string $host): bool
+{
+    $host =
+        strtolower(
+            rtrim(
+                trim($host),
+                '.'
+            )
+        );
+
+    return (
+        $host === 'www.bjmpsolucoes.com.br' ||
+        $host === 'bjmpsolucoes.com.br'
+    );
+}
+
+
+/* =========================================================
    ORIGIN / REFERER
 ========================================================= */
 
-function isAllowedOrigin(): bool
+function validOrigin(): bool
 {
 
-    $allowedHosts = [
-        strtolower(SITE_HOST),
-        'www.' . strtolower(SITE_HOST)
-    ];
-
-
     /*
-     * Preferimos Origin.
+     * Preferimos o cabeçalho Origin.
      */
 
     if (
@@ -188,40 +215,52 @@ function isAllowedOrigin(): bool
 
         $origin =
             trim(
-                $_SERVER['HTTP_ORIGIN']
+                (string)$_SERVER['HTTP_ORIGIN']
             );
 
-        $originParts =
-            parse_url($origin);
+        $parts =
+            parse_url(
+                $origin
+            );
 
         if (
-            !is_array($originParts) ||
-            empty($originParts['host'])
+            !is_array($parts) ||
+            empty($parts['host'])
         ) {
 
             return false;
 
         }
 
-
         $scheme =
             strtolower(
-                $originParts['scheme'] ?? ''
+                (string)($parts['scheme'] ?? '')
             );
 
         $host =
             strtolower(
-                $originParts['host']
+                rtrim(
+                    (string)$parts['host'],
+                    '.'
+                )
             );
 
+        /*
+         * Não aceitamos credenciais dentro da URL.
+         */
+
+        if (
+            isset($parts['user']) ||
+            isset($parts['pass'])
+        ) {
+
+            return false;
+
+        }
 
         return (
             $scheme === 'https' &&
-            in_array(
-                $host,
-                $allowedHosts,
-                true
-            )
+            allowedHost($host)
         );
 
     }
@@ -237,40 +276,48 @@ function isAllowedOrigin(): bool
 
         $referer =
             trim(
-                $_SERVER['HTTP_REFERER']
+                (string)$_SERVER['HTTP_REFERER']
             );
 
-        $refererParts =
-            parse_url($referer);
+        $parts =
+            parse_url(
+                $referer
+            );
 
         if (
-            !is_array($refererParts) ||
-            empty($refererParts['host'])
+            !is_array($parts) ||
+            empty($parts['host'])
         ) {
 
             return false;
 
         }
 
-
         $scheme =
             strtolower(
-                $refererParts['scheme'] ?? ''
+                (string)($parts['scheme'] ?? '')
             );
 
         $host =
             strtolower(
-                $refererParts['host']
+                rtrim(
+                    (string)$parts['host'],
+                    '.'
+                )
             );
 
+        if (
+            isset($parts['user']) ||
+            isset($parts['pass'])
+        ) {
+
+            return false;
+
+        }
 
         return (
             $scheme === 'https' &&
-            in_array(
-                $host,
-                $allowedHosts,
-                true
-            )
+            allowedHost($host)
         );
 
     }
@@ -282,11 +329,10 @@ function isAllowedOrigin(): bool
      */
 
     return false;
-
 }
 
 
-if (!isAllowedOrigin()) {
+if (!validOrigin()) {
 
     respond(
         403,
@@ -301,7 +347,7 @@ if (!isAllowedOrigin()) {
    IP DO CLIENTE
 ========================================================= */
 
-function getClientIp(): string
+function clientIp(): string
 {
 
     /*
@@ -312,7 +358,6 @@ function getClientIp(): string
     $ip =
         $_SERVER['REMOTE_ADDR'] ?? '';
 
-
     if (
         !filter_var(
             $ip,
@@ -320,13 +365,11 @@ function getClientIp(): string
         )
     ) {
 
-        return 'unknown';
+        return '0.0.0.0';
 
     }
 
-
     return $ip;
-
 }
 
 
@@ -334,107 +377,74 @@ function getClientIp(): string
    RATE LIMITING
 ========================================================= */
 
-function rateLimitExceeded(): bool
+function rateLimited(): bool
 {
 
-    $ip =
-        getClientIp();
+    $directory =
+        sys_get_temp_dir() .
+        DIRECTORY_SEPARATOR .
+        'bjmp_contact_rl';
 
+
+    /*
+     * Criamos um diretório privado.
+     */
+
+    if (
+        !is_dir($directory) &&
+        !@mkdir(
+            $directory,
+            0700,
+            true
+        ) &&
+        !is_dir($directory)
+    ) {
+
+        /*
+         * Fail-closed:
+         * se não conseguimos controlar
+         * as tentativas, bloqueamos.
+         */
+
+        return true;
+
+    }
+
+
+    /*
+     * Hash do IP.
+     *
+     * O IP real não aparece no nome
+     * do arquivo.
+     */
 
     $key =
         hash(
             'sha256',
-            $ip
+            clientIp() . '|bjmp-contact'
         );
-
-
-    $directory =
-        sys_get_temp_dir();
 
 
     $file =
         $directory .
         DIRECTORY_SEPARATOR .
-        'bjmp_contact_' .
         $key .
         '.json';
 
 
-    $now =
-        time();
+    /*
+     * c+ cria o arquivo se necessário.
+     */
 
-
-    $data = [
-        'timestamps' => []
-    ];
-
-
-    if (
-        is_file($file)
-    ) {
-
-        $content =
-            @file_get_contents(
-                $file
-            );
-
-
-        if (
-            $content !== false
-        ) {
-
-            $decoded =
-                json_decode(
-                    $content,
-                    true
-                );
-
-
-            if (
-                is_array($decoded) &&
-                isset(
-                    $decoded['timestamps']
-                ) &&
-                is_array(
-                    $decoded['timestamps']
-                )
-            ) {
-
-                $data =
-                    $decoded;
-
-            }
-
-        }
-
-    }
-
-
-    $timestamps = [];
-
-
-    foreach (
-        $data['timestamps']
-        as $timestamp
-    ) {
-
-        if (
-            is_int($timestamp) &&
-            ($now - $timestamp) <
-            RATE_LIMIT_WINDOW
-        ) {
-
-            $timestamps[] =
-                $timestamp;
-
-        }
-
-    }
+    $fp =
+        @fopen(
+            $file,
+            'c+'
+        );
 
 
     if (
-        count($timestamps) >=
-        RATE_LIMIT_MAX
+        $fp === false
     ) {
 
         return true;
@@ -442,28 +452,178 @@ function rateLimitExceeded(): bool
     }
 
 
-    $timestamps[] =
-        $now;
+    try {
+
+        /*
+         * Bloqueio exclusivo durante
+         * leitura e escrita.
+         */
+
+        if (
+            !flock(
+                $fp,
+                LOCK_EX
+            )
+        ) {
+
+            fclose($fp);
+
+            return true;
+
+        }
 
 
-    $data['timestamps'] =
-        $timestamps;
+        rewind($fp);
 
 
-    @file_put_contents(
-        $file,
-        json_encode($data),
-        LOCK_EX
-    );
+        $contents =
+            stream_get_contents(
+                $fp
+            );
 
 
-    return false;
+        $record =
+            is_string($contents)
+                ? json_decode(
+                    $contents,
+                    true
+                )
+                : null;
+
+
+        if (
+            !is_array($record)
+        ) {
+
+            $record = [
+                'start' => time(),
+                'count' => 0
+            ];
+
+        }
+
+
+        $now =
+            time();
+
+
+        $start =
+            (int)(
+                $record['start'] ?? 0
+            );
+
+
+        $count =
+            (int)(
+                $record['count'] ?? 0
+            );
+
+
+        /*
+         * Nova janela de tempo.
+         */
+
+        if (
+            $start <= 0 ||
+            ($now - $start) >= RATE_LIMIT_WINDOW
+        ) {
+
+            $record = [
+                'start' => $now,
+                'count' => 0
+            ];
+
+        }
+
+
+        /*
+         * Conta a tentativa atual.
+         */
+
+        $record['count'] =
+            (int)$record['count'] + 1;
+
+
+        /*
+         * Reescreve o arquivo protegido
+         * pelo flock.
+         */
+
+        ftruncate(
+            $fp,
+            0
+        );
+
+        rewind($fp);
+
+
+        $encoded =
+            json_encode(
+                $record,
+                JSON_UNESCAPED_SLASHES
+            );
+
+
+        if (
+            $encoded === false ||
+            fwrite(
+                $fp,
+                $encoded
+            ) === false
+        ) {
+
+            flock(
+                $fp,
+                LOCK_UN
+            );
+
+            fclose($fp);
+
+            return true;
+
+        }
+
+
+        fflush($fp);
+
+
+        flock(
+            $fp,
+            LOCK_UN
+        );
+
+        fclose($fp);
+
+
+        return (
+            (int)$record['count'] >
+            RATE_LIMIT_MAX
+        );
+
+    } catch (
+        Throwable
+    ) {
+
+        @flock(
+            $fp,
+            LOCK_UN
+        );
+
+        @fclose($fp);
+
+        /*
+         * Fail-closed.
+         */
+
+        return true;
+
+    }
 
 }
 
 
 if (
-    rateLimitExceeded()
+    rateLimited()
 ) {
 
     respond(
@@ -479,53 +639,57 @@ if (
    LEITURA DO JSON
 ========================================================= */
 
-$rawInput =
+$raw =
     file_get_contents(
         'php://input'
     );
 
 
 if (
-    $rawInput === false
+    $raw === false
 ) {
 
     respond(
         400,
         false,
-        'Não foi possível processar a requisição.'
+        'Dados inválidos.'
     );
 
 }
 
 
-/*
- * Limite absoluto do corpo.
- */
+/* =========================================================
+   LIMITE DE PAYLOAD
+========================================================= */
 
 if (
-    strlen($rawInput) > 12000
+    strlen($raw) >
+    MAX_BODY_BYTES
 ) {
 
     respond(
         413,
         false,
-        'Dados enviados excedem o limite permitido.'
+        'Requisição muito grande.'
     );
 
 }
 
 
+/* =========================================================
+   DECODIFICAÇÃO JSON
+========================================================= */
+
 $data =
     json_decode(
-        $rawInput,
+        $raw,
         true
     );
 
 
 if (
     !is_array($data) ||
-    json_last_error() !==
-    JSON_ERROR_NONE
+    json_last_error() !== JSON_ERROR_NONE
 ) {
 
     respond(
@@ -562,6 +726,11 @@ if (
     trim($honeypot) !== ''
 ) {
 
+    /*
+     * Não revelamos ao robô que ele
+     * foi identificado.
+     */
+
     respond(
         200,
         true,
@@ -572,35 +741,126 @@ if (
 
 
 /* =========================================================
-   CAMPOS
+   LIMPEZA DE TEXTO
 ========================================================= */
 
-$name =
-    $data['name'] ?? '';
+function cleanText(
+    mixed $value,
+    int $maxLength
+): string {
 
-$email =
-    $data['email'] ?? '';
+    if (
+        !is_string($value)
+    ) {
 
-$phone =
-    $data['phone'] ?? '';
+        return '';
 
-$message =
-    $data['message'] ?? '';
+    }
+
+
+    $value =
+        trim($value);
+
+
+    /*
+     * Remove caracteres de controle,
+     * preservando UTF-8.
+     */
+
+    $value =
+        preg_replace(
+            '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u',
+            '',
+            $value
+        ) ?? '';
+
+
+    return mb_substr(
+        $value,
+        0,
+        $maxLength
+    );
+}
 
 
 /* =========================================================
-   TIPO DOS CAMPOS
+   CAMPOS DO FORMULÁRIO
+========================================================= */
+
+/*
+ * Estes nomes correspondem exatamente
+ * ao formulário atual do index.html:
+ *
+ * nome
+ * email
+ * telefone
+ * mensagem
+ * website
+ */
+
+$name =
+    cleanText(
+        $data['nome'] ?? '',
+        MAX_NAME_LENGTH
+    );
+
+
+$email =
+    cleanText(
+        $data['email'] ?? '',
+        MAX_EMAIL_LENGTH
+    );
+
+
+$phone =
+    cleanText(
+        $data['telefone'] ?? '',
+        MAX_PHONE_LENGTH
+    );
+
+
+$message =
+    cleanText(
+        $data['mensagem'] ?? '',
+        MAX_MESSAGE_LENGTH
+    );
+
+
+/* =========================================================
+   VALIDAÇÃO DO NOME
 ========================================================= */
 
 if (
-    !is_string($name) ||
-    !is_string($email) ||
-    !is_string($phone) ||
-    !is_string($message)
+    $name === '' ||
+    mb_strlen($name) < 2
 ) {
 
     respond(
-        400,
+        422,
+        false,
+        'Informe seu nome.'
+    );
+
+}
+
+
+/* =========================================================
+   HEADER INJECTION
+========================================================= */
+
+if (
+    preg_match(
+        '/[\r\n]/',
+        $name
+    ) ||
+    preg_match(
+        '/[\r\n]/',
+        $email
+    )
+) {
+
+    respond(
+        422,
         false,
         'Dados inválidos.'
     );
@@ -609,45 +869,10 @@ if (
 
 
 /* =========================================================
-   NORMALIZAÇÃO
-========================================================= */
-
-$name =
-    trim($name);
-
-$email =
-    trim($email);
-
-$phone =
-    trim($phone);
-
-$message =
-    trim($message);
-
-
-/* =========================================================
-   LIMITES
+   VALIDAÇÃO DO E-MAIL
 ========================================================= */
 
 if (
-    $name === '' ||
-    mb_strlen($name) >
-    MAX_NAME_LENGTH
-) {
-
-    respond(
-        422,
-        false,
-        'Informe um nome válido.'
-    );
-
-}
-
-
-if (
-    $email === '' ||
-    mb_strlen($email) >
-    MAX_EMAIL_LENGTH ||
     !filter_var(
         $email,
         FILTER_VALIDATE_EMAIL
@@ -663,6 +888,10 @@ if (
 }
 
 
+/* =========================================================
+   VALIDAÇÃO DO TELEFONE
+========================================================= */
+
 if (
     mb_strlen($phone) >
     MAX_PHONE_LENGTH
@@ -677,96 +906,20 @@ if (
 }
 
 
+/* =========================================================
+   VALIDAÇÃO DA MENSAGEM
+========================================================= */
+
 if (
+    $message === '' ||
     mb_strlen($message) <
-    MIN_MESSAGE_LENGTH ||
-    mb_strlen($message) >
-    MAX_MESSAGE_LENGTH
+    MIN_MESSAGE_LENGTH
 ) {
 
     respond(
         422,
         false,
-        'A mensagem deve ter entre 10 e 2000 caracteres.'
-    );
-
-}
-
-
-/* =========================================================
-   HEADER INJECTION
-========================================================= */
-
-if (
-    preg_match(
-        "/[\r\n]/",
-        $email
-    )
-) {
-
-    respond(
-        422,
-        false,
-        'E-mail inválido.'
-    );
-
-}
-
-
-if (
-    preg_match(
-        "/[\r\n]/",
-        $name
-    )
-) {
-
-    respond(
-        422,
-        false,
-        'Nome inválido.'
-    );
-
-}
-
-
-/* =========================================================
-   CONTROLE DE CARACTERES
-========================================================= */
-
-$name =
-    preg_replace(
-        '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u',
-        '',
-        $name
-    );
-
-
-$phone =
-    preg_replace(
-        '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u',
-        '',
-        $phone
-    );
-
-
-$message =
-    preg_replace(
-        '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u',
-        '',
-        $message
-    );
-
-
-if (
-    $name === null ||
-    $phone === null ||
-    $message === null
-) {
-
-    respond(
-        422,
-        false,
-        'Dados inválidos.'
+        'Escreva uma mensagem com mais detalhes.'
     );
 
 }
@@ -784,19 +937,18 @@ $subject =
    CORPO DO E-MAIL
 ========================================================= */
 
-$emailBody =
-    "NOVO CONTATO - BJMP SOLUÇÕES DIGITAIS\n" .
-    "=====================================\n\n" .
+$body =
+    "Novo contato pelo site BJMP Soluções Digitais\n\n" .
 
-    "Nome:\n" .
+    "Nome: " .
     $name .
-    "\n\n" .
+    "\n" .
 
-    "E-mail:\n" .
+    "E-mail: " .
     $email .
-    "\n\n" .
+    "\n" .
 
-    "Telefone:\n" .
+    "Telefone: " .
     (
         $phone !== ''
             ? $phone
@@ -806,36 +958,36 @@ $emailBody =
 
     "Mensagem:\n" .
     $message .
-    "\n\n" .
-
-    "-------------------------------------\n" .
-
-    "Mensagem enviada pelo formulário do site.\n";
+    "\n";
 
 
 /* =========================================================
    HEADERS DO E-MAIL
 ========================================================= */
 
-$headers = [];
+/*
+ * MAIL_FROM é fixo.
+ *
+ * O e-mail do visitante é utilizado
+ * somente no Reply-To após validação.
+ */
 
-$headers[] =
-    'MIME-Version: 1.0';
+$headers = [
 
-$headers[] =
-    'Content-Type: text/plain; charset=UTF-8';
+    'MIME-Version: 1.0',
 
-$headers[] =
+    'Content-Type: text/plain; charset=UTF-8',
+
     'From: BJMP Soluções Digitais <' .
     MAIL_FROM .
-    '>';
+    '>',
 
-$headers[] =
     'Reply-To: ' .
-    $email;
+    $email,
 
-$headers[] =
-    'X-Mailer: BJMP-Solucoes-Digitais';
+    'X-Mailer: BJMP-Solucoes-Digitais'
+
+];
 
 
 /* =========================================================
@@ -846,7 +998,7 @@ $sent =
     @mail(
         MAIL_TO,
         $subject,
-        $emailBody,
+        $body,
         implode(
             "\r\n",
             $headers
@@ -858,11 +1010,19 @@ $sent =
    RESULTADO
 ========================================================= */
 
-if (!$sent) {
+if (
+    !$sent
+) {
+
+    /*
+     * O visitante não recebe detalhes
+     * internos do servidor.
+     */
 
     error_log(
         'BJMP contact: falha no envio de e-mail.'
     );
+
 
     respond(
         500,
