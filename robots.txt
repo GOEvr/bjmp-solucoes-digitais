@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /.git/
+Disallow: /.github/
+
+Sitemap: https://www.bjmpsolucoes.com.br/sitemap.xml
