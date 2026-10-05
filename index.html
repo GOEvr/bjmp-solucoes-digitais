@@ -126,6 +126,138 @@
     }
     </script>
 
+
+
+    <!-- BJMP HERO VIDEO OVERRIDES -->
+    <style>
+        .hero-video-wrap {
+            position: relative;
+        }
+
+        .hero-video-card {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(75, 170, 255, 0.28);
+            border-radius: 20px;
+            background: #07111f;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42), 0 0 45px rgba(0, 102, 255, 0.14);
+        }
+
+        .hero-video-header {
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 14px;
+            background: rgba(12, 22, 37, 0.98);
+            border-bottom: 1px solid rgba(75, 170, 255, 0.16);
+        }
+
+        .hero-video-label {
+            flex: 1;
+            color: #9eb7d4;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+        }
+
+        .hero-video-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #72c4ff;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .hero-video-status span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4fd1ff;
+            box-shadow: 0 0 10px #4fd1ff;
+        }
+
+        .hero-video-frame {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #050b14;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-video-overlay {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid rgba(110, 190, 255, 0.18);
+            border-radius: 999px;
+            background: rgba(4, 11, 21, 0.72);
+            backdrop-filter: blur(8px);
+            color: #dceeff;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            pointer-events: none;
+        }
+
+        .hero-video-overlay i {
+            color: #43aaff;
+            font-style: normal;
+            font-size: 12px;
+        }
+
+        .hero-video-caption {
+            position: relative;
+            z-index: 2;
+            margin: 12px 4px 0;
+            color: rgba(210, 224, 240, 0.72);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .hero-video-caption strong {
+            color: #78c6ff;
+        }
+
+        @media (max-width: 900px) {
+            .hero-video-card {
+                border-radius: 16px;
+            }
+
+            .hero-video-overlay {
+                gap: 6px;
+                font-size: 7px;
+                letter-spacing: .8px;
+            }
+
+            .hero-video-status {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-video {
+                animation: none !important;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -322,40 +454,61 @@
                 </div>
 
 
-                <div class="hero-visual fade-up">
+                <div class="hero-visual hero-video-wrap fade-up">
 
                     <div class="visual-glow"></div>
 
-                    <div class="mockup-card">
+                    <div class="hero-video-card">
 
-                        <div class="mockup-header">
+                        <div class="hero-video-header">
 
-                            <div class="window-controls">
-
+                            <div class="window-controls" aria-hidden="true">
                                 <span></span>
                                 <span></span>
                                 <span></span>
-
                             </div>
 
-                            <div class="mockup-label">
-                                BJMP DIGITAL
+                            <div class="hero-video-label">
+                                BJMP // DIGITAL LAB
+                            </div>
+
+                            <div class="hero-video-status" aria-hidden="true">
+                                <span></span> LIVE BUILD
                             </div>
 
                         </div>
 
+                        <div class="hero-video-frame">
 
-                        <div class="mockup-image">
-
-                            <img
-                                src="img/neurocombat-mockup.webp"
-                                alt="Projeto digital desenvolvido pela BJMP Soluções Digitais"
-                                loading="eager"
+                            <video
+                                class="hero-video"
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                preload="metadata"
+                                poster="img/bjmp-hero-code-to-result-poster.jpg"
+                                aria-label="Demonstração visual do processo de desenvolvimento da BJMP Soluções Digitais, do código ao resultado final"
                             >
+                                <source src="img/bjmp-hero-code-to-result.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeo HTML5.
+                            </video>
+
+                            <div class="hero-video-overlay" aria-hidden="true">
+                                <span>CÓDIGO</span>
+                                <i>→</i>
+                                <span>DESENVOLVIMENTO</span>
+                                <i>→</i>
+                                <span>RESULTADO</span>
+                            </div>
 
                         </div>
 
                     </div>
+
+                    <p class="hero-video-caption">
+                        Da ideia ao produto digital: <strong>desenvolvimento sob medida.</strong>
+                    </p>
 
                 </div>
 
@@ -1554,4 +1707,4 @@
     <script src="js/script.js"></script>
 
 </body>
-                            </html>
+    </html>
