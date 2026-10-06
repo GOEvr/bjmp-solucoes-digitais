@@ -1,0 +1,378 @@
+/* =========================================================
+   BJMP SOLUÇÕES DIGITAIS — script.js
+   Versão consolidada e compatível com index.html + contact.php
+========================================================= */
+
+'use strict';
+
+const CONTACT_ENDPOINT = '/api/contact.php';
+
+document.addEventListener('DOMContentLoaded', () => {
+    initLoader();
+    initHeader();
+    initMobileMenu();
+    initSmoothScroll();
+    initRevealAnimation();
+    initBrokenImages();
+    initContactForm();
+    initMouseGlow();
+    initParticles();
+});
+
+function initLoader() {
+    const loader = document.getElementById('loader');
+    if (!loader) return;
+
+    window.addEventListener('load', () => {
+        window.setTimeout(() => {
+            loader.classList.add('hidden');
+            window.setTimeout(() => loader.remove(), 600);
+        }, 250);
+    });
+}
+
+function initHeader() {
+    const header = document.getElementById('header');
+    if (!header) return;
+
+    const updateHeader = () => {
+        header.classList.toggle('scrolled', window.scrollY > 40);
+    };
+
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+}
+
+function initMobileMenu() {
+    const toggle = document.getElementById('menuToggle');
+    const menu = document.getElementById('mainNav');
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener('click', () => {
+        const isOpen = toggle.classList.toggle('active');
+        menu.classList.toggle('open', isOpen);
+        document.body.classList.toggle('menu-open', isOpen);
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        toggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+    });
+
+    menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => closeMobileMenu(toggle, menu));
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && menu.classList.contains('open')) {
+            closeMobileMenu(toggle, menu);
+            toggle.focus();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900 && menu.classList.contains('open')) {
+            closeMobileMenu(toggle, menu);
+        }
+    }, { passive: true });
+}
+
+function closeMobileMenu(toggle, menu) {
+    toggle.classList.remove('active');
+    menu.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+}
+
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', event => {
+            const targetId = link.getAttribute('href');
+            if (!targetId || targetId === '#') return;
+
+            let target;
+            try {
+                target = document.querySelector(targetId);
+            } catch {
+                return;
+            }
+
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({
+                behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+                block: 'start'
+            });
+        });
+    });
+}
+
+function initRevealAnimation() {
+    const elements = document.querySelectorAll('.fade-up');
+    if (!elements.length) return;
+
+    if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
+        elements.forEach(element => element.classList.add('visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+    elements.forEach(element => {
+        const rect = element.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.92) {
+            element.classList.add('visible');
+        } else {
+            observer.observe(element);
+        }
+    });
+}
+
+function initBrokenImages() {
+    document.querySelectorAll('.portfolio-image img, .mockup-image img, .hero-visual img').forEach(img => {
+        if (img.complete && img.naturalWidth === 0) {
+            img.classList.add('broken');
+            return;
+        }
+        img.addEventListener('error', () => img.classList.add('broken'));
+    });
+}
+
+function initContactForm() {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    const status = document.getElementById('formStatus');
+    const submitButton = document.getElementById('submitButton');
+    const nameInput = document.getElementById('nome');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('telefone');
+    const messageInput = document.getElementById('mensagem');
+    const honeypot = document.getElementById('website');
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+
+        if (form.dataset.submitting === 'true') return;
+        clearFormStatus(status);
+
+        if (honeypot && honeypot.value.trim() !== '') {
+            form.reset();
+            showFormStatus(status, 'success', 'Mensagem enviada com sucesso.');
+            return;
+        }
+
+        const nome = normalizeInput(nameInput?.value);
+        const email = normalizeInput(emailInput?.value);
+        const telefone = normalizeInput(phoneInput?.value);
+        const mensagem = normalizeInput(messageInput?.value);
+
+        if (!validateName(nome)) {
+            showFormStatus(status, 'error', 'Informe seu nome.');
+            nameInput?.focus();
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            showFormStatus(status, 'error', 'Informe um e-mail válido.');
+            emailInput?.focus();
+            return;
+        }
+
+        if (telefone.length > 30) {
+            showFormStatus(status, 'error', 'Informe um telefone válido.');
+            phoneInput?.focus();
+            return;
+        }
+
+        if (mensagem.length < 10 || mensagem.length > 2000) {
+            showFormStatus(status, 'error', 'A mensagem deve ter entre 10 e 2000 caracteres.');
+            messageInput?.focus();
+            return;
+        }
+
+        form.dataset.submitting = 'true';
+        setSubmitState(submitButton, true);
+
+        try {
+            const response = await fetch(CONTACT_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    /* Nomes exatamente iguais aos esperados pelo PHP. */
+                    nome,
+                    email,
+                    telefone,
+                    mensagem,
+                    website: honeypot ? honeypot.value : ''
+                })
+            });
+
+            let result = null;
+            try {
+                result = await response.json();
+            } catch {
+                result = null;
+            }
+
+            if (response.ok && result?.success === true) {
+                showFormStatus(status, 'success', result.message || 'Mensagem enviada com sucesso.');
+                form.reset();
+            } else {
+                showFormStatus(
+                    status,
+                    'error',
+                    result?.message || 'Não foi possível enviar sua mensagem. Tente novamente.'
+                );
+            }
+        } catch (error) {
+            console.error('Falha no envio do formulário:', error);
+            showFormStatus(status, 'error', 'Não foi possível conectar ao servidor. Tente novamente.');
+        } finally {
+            form.dataset.submitting = 'false';
+            setSubmitState(submitButton, false);
+        }
+    });
+}
+
+function normalizeInput(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).replace(/\u0000/g, '').trim();
+}
+
+function validateName(name) {
+    return Boolean(name) && name.length >= 2 && name.length <= 100;
+}
+
+function validateEmail(email) {
+    if (!email || email.length > 254) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function showFormStatus(element, type, message) {
+    if (!element) return;
+    element.textContent = String(message);
+    element.classList.remove('success', 'error');
+    element.classList.add(type);
+}
+
+function clearFormStatus(element) {
+    if (!element) return;
+    element.textContent = '';
+    element.classList.remove('success', 'error');
+}
+
+function setSubmitState(button, loading) {
+    if (!button) return;
+
+    if (loading) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Enviando...';
+        button.setAttribute('aria-busy', 'true');
+    } else {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText || 'Enviar mensagem';
+        button.removeAttribute('aria-busy');
+    }
+}
+
+function initMouseGlow() {
+    const glow = document.getElementById('mouseGlow');
+    if (!glow || prefersReducedMotion()) return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+
+    let frame = null;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', event => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        if (frame !== null) return;
+
+        frame = window.requestAnimationFrame(() => {
+            glow.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+            frame = null;
+        });
+    }, { passive: true });
+}
+
+function initParticles() {
+    const canvas = document.getElementById('particles');
+    if (!canvas || prefersReducedMotion()) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    let particleCount = window.innerWidth < 768 ? 25 : 45;
+    const particles = [];
+
+    function resizeCanvas() {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(window.innerWidth * ratio);
+        canvas.height = Math.floor(window.innerHeight * ratio);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        particleCount = window.innerWidth < 768 ? 25 : 45;
+    }
+
+    function createParticle() {
+        return {
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            size: Math.random() * 1.4 + 0.4,
+            speed: Math.random() * 0.25 + 0.05,
+            opacity: Math.random() * 0.35 + 0.05
+        };
+    }
+
+    function resetParticles() {
+        particles.length = 0;
+        for (let index = 0; index < particleCount; index++) {
+            particles.push(createParticle());
+        }
+    }
+
+    function draw() {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        particles.forEach(particle => {
+            particle.y -= particle.speed;
+
+            if (particle.y < -5) {
+                particle.y = window.innerHeight + 5;
+                particle.x = Math.random() * window.innerWidth;
+            }
+
+            context.beginPath();
+            context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            context.fillStyle = `rgba(0, 85, 255, ${particle.opacity})`;
+            context.fill();
+        });
+
+        window.requestAnimationFrame(draw);
+    }
+
+    resizeCanvas();
+    resetParticles();
+    draw();
+
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        resetParticles();
+    }, { passive: true });
+}
+
+function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
