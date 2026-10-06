@@ -1,6 +1,7 @@
 /* =========================================================
    BJMP SOLUÇÕES DIGITAIS
    script.js
+   Versão corrigida — formulário compatível com /api/contact.php
 ========================================================= */
 
 'use strict';
@@ -471,6 +472,26 @@ function initContactForm() {
         );
 
 
+    /*
+     * IMPORTANTE:
+     *
+     * Estes IDs precisam existir no HTML:
+     *
+     * #nome
+     * #email
+     * #telefone
+     * #mensagem
+     * #website
+     *
+     * O backend /api/contact.php espera:
+     *
+     * nome
+     * email
+     * telefone
+     * mensagem
+     * website
+     */
+
     const nameInput =
         document.getElementById(
             'nome'
@@ -504,6 +525,10 @@ function initContactForm() {
             event.preventDefault();
 
 
+            /* =================================================
+               PROTEÇÃO CONTRA DUPLO ENVIO
+            ================================================= */
+
             if (
                 form.dataset.submitting ===
                 'true'
@@ -517,9 +542,13 @@ function initContactForm() {
             clearFormStatus(status);
 
 
+            /* =================================================
+               HONEYPOT
+            ================================================= */
+
             if (
                 honeypot &&
-                honeypot.value.trim() !== ''
+                normalizeInput(honeypot.value) !== ''
             ) {
 
                 showFormStatus(
@@ -535,7 +564,11 @@ function initContactForm() {
             }
 
 
-            const name =
+            /* =================================================
+               LEITURA DOS CAMPOS
+            ================================================= */
+
+            const nome =
                 normalizeInput(
                     nameInput?.value
                 );
@@ -545,18 +578,22 @@ function initContactForm() {
                     emailInput?.value
                 );
 
-            const phone =
+            const telefone =
                 normalizeInput(
                     phoneInput?.value
                 );
 
-            const message =
+            const mensagem =
                 normalizeInput(
                     messageInput?.value
                 );
 
 
-            if (!validateName(name)) {
+            /* =================================================
+               VALIDAÇÃO DO NOME
+            ================================================= */
+
+            if (!validateName(nome)) {
 
                 showFormStatus(
                     status,
@@ -570,6 +607,10 @@ function initContactForm() {
 
             }
 
+
+            /* =================================================
+               VALIDAÇÃO DO E-MAIL
+            ================================================= */
 
             if (!validateEmail(email)) {
 
@@ -586,7 +627,11 @@ function initContactForm() {
             }
 
 
-            if (phone.length > 30) {
+            /* =================================================
+               VALIDAÇÃO DO TELEFONE
+            ================================================= */
+
+            if (telefone.length > 30) {
 
                 showFormStatus(
                     status,
@@ -601,9 +646,13 @@ function initContactForm() {
             }
 
 
+            /* =================================================
+               VALIDAÇÃO DA MENSAGEM
+            ================================================= */
+
             if (
-                message.length < 10 ||
-                message.length > 2000
+                mensagem.length < 10 ||
+                mensagem.length > 2000
             ) {
 
                 showFormStatus(
@@ -619,6 +668,10 @@ function initContactForm() {
             }
 
 
+            /* =================================================
+               ATIVA ESTADO DE ENVIO
+            ================================================= */
+
             form.dataset.submitting =
                 'true';
 
@@ -629,6 +682,46 @@ function initContactForm() {
 
 
             try {
+
+                /* =================================================
+                   PAYLOAD CORRIGIDO
+
+                   O PHP espera exatamente estes nomes:
+
+                   nome
+                   email
+                   telefone
+                   mensagem
+                   website
+                ================================================= */
+
+                const payload = {
+
+                    nome:
+                        nome,
+
+                    email:
+                        email,
+
+                    telefone:
+                        telefone,
+
+                    mensagem:
+                        mensagem,
+
+                    website:
+                        honeypot
+                            ? normalizeInput(
+                                honeypot.value
+                            )
+                            : ''
+
+                };
+
+
+                /* =================================================
+                   ENVIO PARA O PHP
+                ================================================= */
 
                 const response =
                     await fetch(
@@ -648,20 +741,16 @@ function initContactForm() {
                                 'same-origin',
 
                             body:
-                                JSON.stringify({
-                                    name,
-                                    email,
-                                    phone,
-                                    message,
-
-                                    website:
-                                        honeypot
-                                            ? honeypot.value
-                                            : ''
-                                })
+                                JSON.stringify(
+                                    payload
+                                )
                         }
                     );
 
+
+                /* =================================================
+                   LEITURA DA RESPOSTA
+                ================================================= */
 
                 let result = null;
 
@@ -676,6 +765,10 @@ function initContactForm() {
 
                 }
 
+
+                /* =================================================
+                   SUCESSO
+                ================================================= */
 
                 if (
                     response.ok &&
@@ -694,6 +787,10 @@ function initContactForm() {
 
                 } else {
 
+                    /* =============================================
+                       ERRO DEVOLVIDO PELO SERVIDOR
+                    ============================================= */
+
                     showFormStatus(
                         status,
                         'error',
@@ -705,6 +802,10 @@ function initContactForm() {
 
 
             } catch (error) {
+
+                /* =================================================
+                   ERRO DE REDE / CONEXÃO
+                ================================================= */
 
                 console.error(
                     'Falha no envio do formulário:',
@@ -718,6 +819,10 @@ function initContactForm() {
                 );
 
             } finally {
+
+                /* =================================================
+                   LIBERA NOVO ENVIO
+                ================================================= */
 
                 form.dataset.submitting =
                     'false';
@@ -815,6 +920,12 @@ function showFormStatus(
     if (!element) {
         return;
     }
+
+    /*
+     * textContent é usado intencionalmente,
+     * evitando interpretação de HTML enviado
+     * pelo servidor ou por usuários.
+     */
 
     element.textContent =
         String(message);
@@ -998,6 +1109,10 @@ function initParticles() {
     const particles = [];
 
 
+    /* =====================================================
+       REDIMENSIONAMENTO DO CANVAS
+    ===================================================== */
+
     function resizeCanvas() {
 
         const ratio =
@@ -1036,6 +1151,10 @@ function initParticles() {
     }
 
 
+    /* =====================================================
+       CRIAÇÃO DAS PARTÍCULAS
+    ===================================================== */
+
     function createParticle() {
 
         return {
@@ -1062,6 +1181,10 @@ function initParticles() {
     }
 
 
+    /* =====================================================
+       RESET DAS PARTÍCULAS
+    ===================================================== */
+
     function resetParticles() {
 
         particles.length = 0;
@@ -1080,6 +1203,10 @@ function initParticles() {
 
     }
 
+
+    /* =====================================================
+       DESENHO / ANIMAÇÃO
+    ===================================================== */
 
     function draw() {
 
@@ -1144,6 +1271,10 @@ function initParticles() {
     draw();
 
 
+    /* =====================================================
+       RESIZE
+    ===================================================== */
+
     window.addEventListener(
         'resize',
         () => {
@@ -1170,4 +1301,4 @@ function prefersReducedMotion() {
         '(prefers-reduced-motion: reduce)'
     ).matches;
 
-}
+                            }
