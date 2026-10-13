@@ -15,6 +15,21 @@ const CONTACT_ENDPOINT = '/api/contact.php';
 
 
 /* =========================================================
+   GOOGLE ANALYTICS 4
+========================================================= */
+
+function trackEvent(eventName, parameters = {}) {
+
+    if (typeof window.gtag !== 'function') {
+        return;
+    }
+
+    window.gtag('event', eventName, parameters);
+
+}
+
+
+/* =========================================================
    DOM READY
 ========================================================= */
 
@@ -27,10 +42,31 @@ document.addEventListener('DOMContentLoaded', () => {
     initRevealAnimation();
     initBrokenImages();
     initContactForm();
+    initAnalyticsEvents();
+    initReducedMotionVideo();
     initMouseGlow();
     initParticles();
 
 });
+
+
+/* =========================================================
+   VÍDEO DO HERO — PREFERÊNCIA DE MOVIMENTO REDUZIDO
+========================================================= */
+
+function initReducedMotionVideo() {
+
+    if (!prefersReducedMotion()) {
+        return;
+    }
+
+    document.querySelectorAll('video[autoplay]').forEach(video => {
+        video.pause();
+        video.removeAttribute('autoplay');
+        video.setAttribute('preload', 'none');
+    });
+
+}
 
 
 /* =========================================================
@@ -81,13 +117,9 @@ function initHeader() {
     const updateHeader = () => {
 
         if (window.scrollY > 40) {
-
             header.classList.add('scrolled');
-
         } else {
-
             header.classList.remove('scrolled');
-
         }
 
     };
@@ -120,7 +152,6 @@ function initMobileMenu() {
     if (!toggle || !menu) {
         return;
     }
-
 
     toggle.addEventListener('click', () => {
 
@@ -474,15 +505,7 @@ function initContactForm() {
 
     /*
      * IMPORTANTE:
-     *
-     * Estes IDs precisam existir no HTML:
-     *
-     * #nome
-     * #email
-     * #telefone
-     * #mensagem
-     * #website
-     *
+     * Os IDs abaixo precisam corresponder ao HTML.
      * O backend /api/contact.php espera:
      *
      * nome
@@ -525,9 +548,10 @@ function initContactForm() {
             event.preventDefault();
 
 
-            /* =================================================
-               PROTEÇÃO CONTRA DUPLO ENVIO
-            ================================================= */
+            /*
+             * Impede duplo envio enquanto a requisição
+             * anterior ainda estiver em andamento.
+             */
 
             if (
                 form.dataset.submitting ===
@@ -542,9 +566,11 @@ function initContactForm() {
             clearFormStatus(status);
 
 
-            /* =================================================
-               HONEYPOT
-            ================================================= */
+            /*
+             * Honeypot:
+             * se estiver preenchido, não envia os dados
+             * ao servidor. Para bots, simulamos sucesso.
+             */
 
             if (
                 honeypot &&
@@ -564,9 +590,16 @@ function initContactForm() {
             }
 
 
-            /* =================================================
-               LEITURA DOS CAMPOS
-            ================================================= */
+            /*
+             * LEITURA DOS CAMPOS
+             *
+             * O problema corrigido estava aqui:
+             * o JavaScript anterior enviava:
+             * name / phone / message
+             *
+             * enquanto o PHP espera:
+             * nome / telefone / mensagem
+             */
 
             const nome =
                 normalizeInput(
@@ -589,9 +622,9 @@ function initContactForm() {
                 );
 
 
-            /* =================================================
-               VALIDAÇÃO DO NOME
-            ================================================= */
+            /* =====================================================
+               VALIDAÇÕES CLIENT-SIDE
+            ===================================================== */
 
             if (!validateName(nome)) {
 
@@ -608,10 +641,6 @@ function initContactForm() {
             }
 
 
-            /* =================================================
-               VALIDAÇÃO DO E-MAIL
-            ================================================= */
-
             if (!validateEmail(email)) {
 
                 showFormStatus(
@@ -627,10 +656,6 @@ function initContactForm() {
             }
 
 
-            /* =================================================
-               VALIDAÇÃO DO TELEFONE
-            ================================================= */
-
             if (telefone.length > 30) {
 
                 showFormStatus(
@@ -645,10 +670,6 @@ function initContactForm() {
 
             }
 
-
-            /* =================================================
-               VALIDAÇÃO DA MENSAGEM
-            ================================================= */
 
             if (
                 mensagem.length < 10 ||
@@ -668,10 +689,6 @@ function initContactForm() {
             }
 
 
-            /* =================================================
-               ATIVA ESTADO DE ENVIO
-            ================================================= */
-
             form.dataset.submitting =
                 'true';
 
@@ -683,45 +700,25 @@ function initContactForm() {
 
             try {
 
-                /* =================================================
-                   PAYLOAD CORRIGIDO
-
-                   O PHP espera exatamente estes nomes:
-
-                   nome
-                   email
-                   telefone
-                   mensagem
-                   website
-                ================================================= */
+                /*
+                 * O backend recebe JSON.
+                 *
+                 * Os nomes das propriedades abaixo são
+                 * deliberadamente iguais aos nomes esperados
+                 * pelo /api/contact.php.
+                 */
 
                 const payload = {
-
-                    nome:
-                        nome,
-
-                    email:
-                        email,
-
-                    telefone:
-                        telefone,
-
-                    mensagem:
-                        mensagem,
-
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    mensagem: mensagem,
                     website:
                         honeypot
-                            ? normalizeInput(
-                                honeypot.value
-                            )
+                            ? normalizeInput(honeypot.value)
                             : ''
-
                 };
 
-
-                /* =================================================
-                   ENVIO PARA O PHP
-                ================================================= */
 
                 const response =
                     await fetch(
@@ -741,16 +738,19 @@ function initContactForm() {
                                 'same-origin',
 
                             body:
-                                JSON.stringify(
-                                    payload
-                                )
+                                JSON.stringify(payload)
                         }
                     );
 
 
-                /* =================================================
-                   LEITURA DA RESPOSTA
-                ================================================= */
+                /*
+                 * Nem todo erro HTTP lança exceção no fetch().
+                 * Por isso response.ok é verificado abaixo.
+                 *
+                 * Também tratamos respostas que não sejam JSON,
+                 * evitando que uma resposta HTML do servidor
+                 * quebre o fluxo do formulário.
+                 */
 
                 let result = null;
 
@@ -766,15 +766,18 @@ function initContactForm() {
                 }
 
 
-                /* =================================================
-                   SUCESSO
-                ================================================= */
-
                 if (
                     response.ok &&
                     result &&
                     result.success === true
                 ) {
+
+                    trackEvent(
+                        'generate_lead',
+                        {
+                            lead_source: 'formulario_contato'
+                        }
+                    );
 
                     showFormStatus(
                         status,
@@ -786,10 +789,6 @@ function initContactForm() {
                     form.reset();
 
                 } else {
-
-                    /* =============================================
-                       ERRO DEVOLVIDO PELO SERVIDOR
-                    ============================================= */
 
                     showFormStatus(
                         status,
@@ -803,9 +802,10 @@ function initContactForm() {
 
             } catch (error) {
 
-                /* =================================================
-                   ERRO DE REDE / CONEXÃO
-                ================================================= */
+                /*
+                 * Erros de rede, DNS, bloqueio de conexão,
+                 * endpoint indisponível etc.
+                 */
 
                 console.error(
                     'Falha no envio do formulário:',
@@ -819,10 +819,6 @@ function initContactForm() {
                 );
 
             } finally {
-
-                /* =================================================
-                   LIBERA NOVO ENVIO
-                ================================================= */
 
                 form.dataset.submitting =
                     'false';
@@ -921,12 +917,6 @@ function showFormStatus(
         return;
     }
 
-    /*
-     * textContent é usado intencionalmente,
-     * evitando interpretação de HTML enviado
-     * pelo servidor ou por usuários.
-     */
-
     element.textContent =
         String(message);
 
@@ -997,6 +987,122 @@ function setSubmitState(
         );
 
     }
+
+}
+
+
+/* =========================================================
+   EVENTOS DE CONVERSÃO / GOOGLE ANALYTICS 4
+========================================================= */
+
+function initAnalyticsEvents() {
+
+    /*
+     * WhatsApp:
+     * registra somente a interação, nunca telefone,
+     * nome ou qualquer outro dado pessoal do visitante.
+     */
+
+    document.querySelectorAll(
+        'a[href*="wa.me"], a[href*="api.whatsapp.com"]'
+    ).forEach(link => {
+
+        link.addEventListener('click', () => {
+
+            trackEvent(
+                'contact',
+                {
+                    method: 'whatsapp'
+                }
+            );
+
+        });
+
+    });
+
+
+    /*
+     * CTAs e links internos importantes.
+     * O texto é convertido apenas em uma categoria controlada,
+     * evitando enviar conteúdo arbitrário ao Analytics.
+     */
+
+    document.querySelectorAll(
+        'a[href="#contato"], a[href="#servicos"], a[href="#projetos"]'
+    ).forEach(link => {
+
+        link.addEventListener('click', () => {
+
+            const href = link.getAttribute('href');
+
+            if (href === '#contato') {
+
+                trackEvent(
+                    'select_content',
+                    {
+                        content_type: 'cta',
+                        content_id: 'contato'
+                    }
+                );
+
+                return;
+
+            }
+
+            if (href === '#servicos') {
+
+                trackEvent(
+                    'select_content',
+                    {
+                        content_type: 'cta',
+                        content_id: 'servicos'
+                    }
+                );
+
+                return;
+
+            }
+
+            if (href === '#projetos') {
+
+                trackEvent(
+                    'select_content',
+                    {
+                        content_type: 'cta',
+                        content_id: 'projetos'
+                    }
+                );
+
+            }
+
+        });
+
+    });
+
+
+    /*
+     * Portfólio:
+     * identifica apenas a categoria/posição do projeto,
+     * sem enviar URL arbitrária ou dados pessoais.
+     */
+
+    document.querySelectorAll(
+        '.portfolio-card a, .project-card a'
+    ).forEach((link, index) => {
+
+        link.addEventListener('click', () => {
+
+            trackEvent(
+                'select_content',
+                {
+                    content_type: 'portfolio',
+                    content_id: `projeto_${index + 1}`
+                }
+            );
+
+        });
+
+    });
 
 }
 
@@ -1109,10 +1215,6 @@ function initParticles() {
     const particles = [];
 
 
-    /* =====================================================
-       REDIMENSIONAMENTO DO CANVAS
-    ===================================================== */
-
     function resizeCanvas() {
 
         const ratio =
@@ -1151,10 +1253,6 @@ function initParticles() {
     }
 
 
-    /* =====================================================
-       CRIAÇÃO DAS PARTÍCULAS
-    ===================================================== */
-
     function createParticle() {
 
         return {
@@ -1181,10 +1279,6 @@ function initParticles() {
     }
 
 
-    /* =====================================================
-       RESET DAS PARTÍCULAS
-    ===================================================== */
-
     function resetParticles() {
 
         particles.length = 0;
@@ -1203,10 +1297,6 @@ function initParticles() {
 
     }
 
-
-    /* =====================================================
-       DESENHO / ANIMAÇÃO
-    ===================================================== */
 
     function draw() {
 
@@ -1271,10 +1361,6 @@ function initParticles() {
     draw();
 
 
-    /* =====================================================
-       RESIZE
-    ===================================================== */
-
     window.addEventListener(
         'resize',
         () => {
@@ -1301,4 +1387,4 @@ function prefersReducedMotion() {
         '(prefers-reduced-motion: reduce)'
     ).matches;
 
-                            }
+}
