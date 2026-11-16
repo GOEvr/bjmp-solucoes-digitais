@@ -1,8 +1,14 @@
+
 User-agent: *
 Allow: /
 
 Disallow: /api/
 Disallow: /.git/
 Disallow: /.github/
+
+# Preferencias de uso de conteudo
+# Permite indexacao e uso como entrada para respostas de IA.
+# Nao autoriza treinamento de modelos.
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 
 Sitemap: https://www.bjmpsolucoes.com.br/sitemap.xml
