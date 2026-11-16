@@ -1,27 +1,19 @@
+
 # ============================================================
-# BJMP SOLUÇÕES DIGITAIS
-# .htaccess — PRODUÇÃO
+# BJMP SOLUCOES DIGITAIS
+# .htaccess - PRODUCAO
 # https://www.bjmpsolucoes.com.br/
 # ============================================================
 
-
 # ============================================================
-# 1. DESABILITAR LISTAGEM DE DIRETÓRIOS
+# 1. DESABILITAR LISTAGEM DE DIRETORIOS
 # ============================================================
 
 Options -Indexes
 
 
 # ============================================================
-# 2. URL CANÔNICA
-#
-# Força:
-# http://bjmpsolucoes.com.br
-# http://www.bjmpsolucoes.com.br
-# https://bjmpsolucoes.com.br
-#
-# para:
-# https://www.bjmpsolucoes.com.br
+# 2. URL CANONICA
 # ============================================================
 
 RewriteEngine On
@@ -32,7 +24,7 @@ RewriteRule ^ https://www.bjmpsolucoes.com.br%{REQUEST_URI} [R=301,L]
 
 
 # ============================================================
-# 3. BLOQUEAR ACESSO DIRETO A ARQUIVOS SENSÍVEIS
+# 3. BLOQUEAR ARQUIVOS SENSIVEIS
 # ============================================================
 
 <FilesMatch "(^\.|\.env$|\.ini$|\.log$|\.sql$|\.sqlite$|\.sqlite3$|\.bak$|\.backup$|\.old$|\.orig$|\.save$|\.swp$|\.tmp$|\.dist$|composer\.(json|lock)$|package(-lock)?\.json$)">
@@ -41,7 +33,7 @@ RewriteRule ^ https://www.bjmpsolucoes.com.br%{REQUEST_URI} [R=301,L]
 
 
 # ============================================================
-# 4. BLOQUEAR DIRETÓRIOS E ARQUIVOS DE CONTROLE
+# 4. BLOQUEAR DIRETORIOS E ARQUIVOS DE CONTROLE
 # ============================================================
 
 RewriteRule ^(?:\.git|\.github)(?:/|$) - [F,L,NC]
@@ -52,7 +44,7 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 5. PROTEGER O PRÓPRIO .HTACCESS
+# 5. PROTEGER O PROPRIO .HTACCESS
 # ============================================================
 
 <Files ".htaccess">
@@ -61,7 +53,7 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 6. PROTEGER ARQUIVOS DE CONFIGURAÇÃO COMUNS
+# 6. PROTEGER ARQUIVOS DE CONFIGURACAO
 # ============================================================
 
 <FilesMatch "\.(?:conf|config|cfg|ini|env|dist|bak|backup|old|orig|save|swp|sql|sqlite|sqlite3|log)$">
@@ -70,31 +62,26 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 7. HEADERS DE SEGURANÇA
+# 7. HEADERS DE SEGURANCA E AGENT DISCOVERY
 # ============================================================
 
 <IfModule mod_headers.c>
 
-    # Impede que o navegador tente interpretar um tipo MIME
-    # diferente daquele declarado pelo servidor.
     Header always set X-Content-Type-Options "nosniff"
 
-    # Proteção contra carregamento da página em iframe
-    # por outros sites.
     Header always set X-Frame-Options "SAMEORIGIN"
 
-    # Política de referência.
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
-    # Reduz vetores relacionados a recursos e APIs
-    # desnecessárias do navegador.
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # Politica unificada
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
 
-    # Desabilita o FLoC/Topics em navegadores que respeitem
-    # este mecanismo legado.
-    Header always set Permissions-Policy "interest-cohort=()"
+    # Descoberta de conteudo para agentes e ferramentas
+    Header always set Link "<https://www.bjmpsolucoes.com.br/llms.txt>; rel=describedby; type=text/plain"
 
-    # Impede cache de respostas da API de contato.
+    Header always add Link "<https://www.bjmpsolucoes.com.br/index.md>; rel=alternate; type=text/markdown"
+
+    # API de contato sem cache
     <Files "contact.php">
         Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
         Header always set Pragma "no-cache"
@@ -105,12 +92,6 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 # ============================================================
 # 8. HSTS
-#
-# ATENÇÃO:
-# Só utilizar se o domínio já estiver funcionando corretamente
-# em HTTPS.
-#
-# O navegador passará a exigir HTTPS para o domínio.
 # ============================================================
 
 <IfModule mod_headers.c>
@@ -121,24 +102,20 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 9. CACHE DE ARQUIVOS ESTÁTICOS
+# 9. CACHE DE ARQUIVOS ESTATICOS
 # ============================================================
 
 <IfModule mod_expires.c>
 
     ExpiresActive On
 
-    # HTML
     ExpiresByType text/html "access plus 0 seconds"
 
-    # CSS
     ExpiresByType text/css "access plus 7 days"
 
-    # JavaScript
     ExpiresByType application/javascript "access plus 7 days"
     ExpiresByType text/javascript "access plus 7 days"
 
-    # Imagens
     ExpiresByType image/jpeg "access plus 30 days"
     ExpiresByType image/png "access plus 30 days"
     ExpiresByType image/webp "access plus 30 days"
@@ -146,20 +123,21 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
     ExpiresByType image/svg+xml "access plus 30 days"
     ExpiresByType image/x-icon "access plus 30 days"
 
-    # Fontes
     ExpiresByType font/woff "access plus 30 days"
     ExpiresByType font/woff2 "access plus 30 days"
     ExpiresByType application/font-woff "access plus 30 days"
     ExpiresByType application/font-woff2 "access plus 30 days"
 
-    # Manifest
     ExpiresByType application/manifest+json "access plus 7 days"
+
+    # Markdown: evitar cache prolongado durante atualizacoes
+    ExpiresByType text/markdown "access plus 0 seconds"
 
 </IfModule>
 
 
 # ============================================================
-# 10. CACHE-CONTROL PARA ARQUIVOS ESTÁTICOS
+# 10. CACHE-CONTROL PARA ARQUIVOS ESTATICOS
 # ============================================================
 
 <IfModule mod_headers.c>
@@ -168,11 +146,15 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
         Header set Cache-Control "public, max-age=2592000"
     </FilesMatch>
 
+    <FilesMatch "\.(?:md|txt)$">
+        Header set Cache-Control "public, max-age=300"
+    </FilesMatch>
+
 </IfModule>
 
 
 # ============================================================
-# 11. NÃO CACHEAR A API DE CONTATO
+# 11. NAO CACHEAR A API DE CONTATO
 # ============================================================
 
 <IfModule mod_headers.c>
@@ -187,10 +169,7 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 12. BLOQUEAR MÉTODOS HTTP DESNECESSÁRIOS
-#
-# O site é essencialmente GET/HEAD.
-# A API de contato precisa aceitar POST.
+# 12. BLOQUEAR METODOS HTTP DESNECESSARIOS
 # ============================================================
 
 <IfModule mod_rewrite.c>
@@ -202,24 +181,14 @@ RewriteRule ^(?:README|CHANGELOG|LICENSE)(?:\.[^/]+)?$ - [F,L,NC]
 
 
 # ============================================================
-# 13. BLOQUEAR ACESSO À PASTA /api/ EXCETO contact.php
-#
-# A API continua acessível para o formulário:
-#
-# /api/contact.php
-#
-# Outros arquivos eventualmente colocados em /api/ ficam
-# protegidos.
+# 13. BLOQUEAR PASTA API EXCETO CONTACT.PHP
 # ============================================================
 
 RewriteRule ^api/(?!contact\.php$).* - [F,L,NC]
 
 
 # ============================================================
-# 14. IMPEDIR EXECUÇÃO DE ARQUIVOS INESPERADOS NA PASTA
-# /img/
-#
-# SVG, imagens e demais arquivos estáticos continuam normais.
+# 14. IMPEDIR EXECUCAO DE ARQUIVOS NA PASTA IMG
 # ============================================================
 
 <IfModule mod_rewrite.c>
@@ -230,7 +199,7 @@ RewriteRule ^api/(?!contact\.php$).* - [F,L,NC]
 
 
 # ============================================================
-# 15. PROTEGER ARQUIVOS DE BACKUP E DESENVOLVIMENTO
+# 15. PROTEGER BACKUPS
 # ============================================================
 
 <IfModule mod_rewrite.c>
@@ -241,7 +210,7 @@ RewriteRule ^api/(?!contact\.php$).* - [F,L,NC]
 
 
 # ============================================================
-# 16. COMPACTAÇÃO GZIP / DEFLATE
+# 16. COMPACTACAO GZIP / DEFLATE
 # ============================================================
 
 <IfModule mod_deflate.c>
@@ -269,18 +238,19 @@ RewriteRule ^api/(?!contact\.php$).* - [F,L,NC]
     AddType image/svg+xml .svg
     AddType image/webp .webp
     AddType application/manifest+json .webmanifest
+    AddType text/markdown .md
 
 </IfModule>
 
 
 # ============================================================
-# 18. PÁGINA 404
+# 18. PAGINA 404
 # ============================================================
 
 ErrorDocument 404 /index.html
 
 
 # ============================================================
-# FIM DO .HTACCESS
-# BJMP SOLUÇÕES DIGITAIS
+# FIM DO HTACCESS
+# BJMP SOLUCOES DIGITAIS
 # ============================================================
