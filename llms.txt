@@ -1,6 +1,14 @@
 # BJMP Soluções Digitais
 
-> Desenvolvimento de sites, landing pages, sistemas web, automações e soluções digitais com inteligência artificial para empresas e profissionais em todo o Brasil.
+> Desenvolvimento remoto de sites, landing pages, sistemas web, automações e soluções digitais com inteligência artificial para empresas e profissionais em todo o Brasil.
+
+## Páginas principais
+
+- [Página inicial](https://www.bjmpsolucoes.com.br/)
+- [Serviços](https://www.bjmpsolucoes.com.br/servicos/)
+- [Sobre a empresa](https://www.bjmpsolucoes.com.br/sobre/)
+- [Contato](https://www.bjmpsolucoes.com.br/contato/)
+- [Projetos apresentados](https://www.bjmpsolucoes.com.br/#projetos)
 
 ## Sobre a empresa
 
@@ -8,21 +16,14 @@ A BJMP Soluções Digitais desenvolve soluções digitais personalizadas para pe
 
 O trabalho combina desenvolvimento web, automação, inteligência artificial, design e análise de processos.
 
-A empresa trabalha de forma remota e atende projetos em todo o Brasil. Não possui endereço comercial físico divulgado.
+A empresa atua remotamente e atende projetos em todo o Brasil. Não possui endereço comercial físico divulgado.
 
 ## Serviços
 
-### Landing Pages
-Páginas estratégicas para apresentar produtos, serviços e gerar oportunidades.
-
-### Sites institucionais
-Presença digital profissional, responsiva e alinhada à identidade da empresa.
-
-### Sistemas web
-Sistemas personalizados para organizar processos, informações e operações.
-
-### Automações e inteligência artificial
-Integrações, automações e recursos de inteligência artificial para reduzir tarefas repetitivas e aumentar a eficiência.
+- [Landing Pages](https://www.bjmpsolucoes.com.br/servicos/#landing-pages): páginas estratégicas para apresentar produtos, serviços e campanhas e facilitar o contato.
+- [Sites Institucionais](https://www.bjmpsolucoes.com.br/servicos/#sites-institucionais): sites profissionais e responsivos para apresentar empresas, serviços e canais de atendimento.
+- [Sistemas Web](https://www.bjmpsolucoes.com.br/servicos/#sistemas-web): aplicações personalizadas para organizar informações e apoiar processos.
+- [Automações e Inteligência Artificial](https://www.bjmpsolucoes.com.br/servicos/#automacoes-ia): integrações e fluxos automatizados, com IA quando adequada ao objetivo do projeto.
 
 ## Projetos apresentados no portfólio
 
@@ -39,7 +40,7 @@ Integrações, automações e recursos de inteligência artificial para reduzir 
 3. Design: desenvolvimento da experiência visual e estrutural.
 4. Desenvolvimento: implementação da solução.
 5. Entrega: testes e disponibilização do projeto.
-6. Suporte: acompanhamento da evolução da solução.
+6. Suporte: acompanhamento da evolução da solução, conforme o escopo contratado.
 
 ## Tecnologias e ferramentas
 
@@ -47,27 +48,15 @@ HTML5, CSS3, JavaScript, PHP, Python, Firebase, Google Apps Script, GitHub, Clou
 
 ## Contato
 
-- Site: https://www.bjmpsolucoes.com.br/
-- Página de contato: https://www.bjmpsolucoes.com.br/contato/
+- [Página de contato](https://www.bjmpsolucoes.com.br/contato/)
 - E-mail: contato@bjmpsolucoes.com.br
-- WhatsApp: https://wa.me/5524999599347
+- [WhatsApp](https://wa.me/5524999599347)
 
-## Páginas do site
+## Recursos para mecanismos de busca e agentes de IA
 
-- Página inicial: https://www.bjmpsolucoes.com.br/
-- Sobre a empresa: https://www.bjmpsolucoes.com.br/sobre/
-- Contato: https://www.bjmpsolucoes.com.br/contato/
-
-## Seções da página inicial
-
-- Serviços: https://www.bjmpsolucoes.com.br/#servicos
-- Projetos: https://www.bjmpsolucoes.com.br/#projetos
-
-## Recursos para mecanismos de busca e IA
-
-- Sitemap: https://www.bjmpsolucoes.com.br/sitemap.xml
-- Versão Markdown da página inicial: https://www.bjmpsolucoes.com.br/index.md
-- Este arquivo: https://www.bjmpsolucoes.com.br/llms.txt
+- [Sitemap XML](https://www.bjmpsolucoes.com.br/sitemap.xml)
+- [Versão Markdown da página inicial](https://www.bjmpsolucoes.com.br/index.md)
+- [Este arquivo llms.txt](https://www.bjmpsolucoes.com.br/llms.txt)
 
 ## Política de utilização do conteúdo
 

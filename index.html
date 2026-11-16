@@ -124,29 +124,100 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "Organization",
-                "@id": "https://www.bjmpsolucoes.com.br/#organization",
-                "name": "BJMP Soluções Digitais",
-                "url": "https://www.bjmpsolucoes.com.br/",
-                "logo": "https://www.bjmpsolucoes.com.br/img/logo-bjmp.svg",
-                "email": "contato@bjmpsolucoes.com.br",
-                "telephone": "+55 24 99959-9347",
-                "description": "Criação de sites, landing pages e sistemas web sob medida para empresas em todo o Brasil."
-            },
-            {
-                "@type": "WebSite",
-                "@id": "https://www.bjmpsolucoes.com.br/#website",
-                "url": "https://www.bjmpsolucoes.com.br/",
-                "name": "BJMP Soluções Digitais",
-                "inLanguage": "pt-BR",
-                "publisher": {
-                    "@id": "https://www.bjmpsolucoes.com.br/#organization"
-                }
-            }
-        ]
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.bjmpsolucoes.com.br/#organization",
+          "name": "BJMP Soluções Digitais",
+          "url": "https://www.bjmpsolucoes.com.br/",
+          "logo": "https://www.bjmpsolucoes.com.br/img/logo-bjmp.svg",
+          "email": "contato@bjmpsolucoes.com.br",
+          "telephone": "+55 24 99959-9347",
+          "description": "Desenvolvimento remoto de sites, landing pages, sistemas web, automações e soluções digitais com inteligência artificial para empresas e profissionais em todo o Brasil.",
+          "areaServed": {
+            "@type": "Country",
+            "name": "Brasil"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Atendimento comercial",
+            "email": "contato@bjmpsolucoes.com.br",
+            "telephone": "+55 24 99959-9347",
+            "availableLanguage": ["Portuguese"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.bjmpsolucoes.com.br/#website",
+          "url": "https://www.bjmpsolucoes.com.br/",
+          "name": "BJMP Soluções Digitais",
+          "inLanguage": "pt-BR",
+          "publisher": {
+            "@id": "https://www.bjmpsolucoes.com.br/#organization"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://www.bjmpsolucoes.com.br/#webpage",
+          "url": "https://www.bjmpsolucoes.com.br/",
+          "name": "BJMP Soluções Digitais | Sites, Sistemas, IA e Automações",
+          "description": "Criação de sites, landing pages, sistemas web, automações e soluções digitais com inteligência artificial.",
+          "isPartOf": {
+            "@id": "https://www.bjmpsolucoes.com.br/#website"
+          },
+          "about": {
+            "@id": "https://www.bjmpsolucoes.com.br/#organization"
+          },
+          "mainEntity": [
+            {"@id": "https://www.bjmpsolucoes.com.br/servicos/#landing-pages"},
+            {"@id": "https://www.bjmpsolucoes.com.br/servicos/#sites-institucionais"},
+            {"@id": "https://www.bjmpsolucoes.com.br/servicos/#sistemas-web"},
+            {"@id": "https://www.bjmpsolucoes.com.br/servicos/#automacoes-ia"}
+          ],
+          "inLanguage": "pt-BR"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://www.bjmpsolucoes.com.br/servicos/#landing-pages",
+          "name": "Desenvolvimento de Landing Pages",
+          "serviceType": "Landing Pages",
+          "description": "Páginas estratégicas para apresentar produtos e serviços e gerar oportunidades de contato.",
+          "provider": {"@id": "https://www.bjmpsolucoes.com.br/#organization"},
+          "areaServed": {"@type": "Country", "name": "Brasil"},
+          "url": "https://www.bjmpsolucoes.com.br/servicos/#landing-pages"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://www.bjmpsolucoes.com.br/servicos/#sites-institucionais",
+          "name": "Desenvolvimento de Sites Institucionais",
+          "serviceType": "Sites institucionais",
+          "description": "Sites profissionais e responsivos alinhados à identidade e aos objetivos da empresa.",
+          "provider": {"@id": "https://www.bjmpsolucoes.com.br/#organization"},
+          "areaServed": {"@type": "Country", "name": "Brasil"},
+          "url": "https://www.bjmpsolucoes.com.br/servicos/#sites-institucionais"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://www.bjmpsolucoes.com.br/servicos/#sistemas-web",
+          "name": "Desenvolvimento de Sistemas Web",
+          "serviceType": "Sistemas web personalizados",
+          "description": "Sistemas personalizados para organizar processos, informações e operações.",
+          "provider": {"@id": "https://www.bjmpsolucoes.com.br/#organization"},
+          "areaServed": {"@type": "Country", "name": "Brasil"},
+          "url": "https://www.bjmpsolucoes.com.br/servicos/#sistemas-web"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://www.bjmpsolucoes.com.br/servicos/#automacoes-ia",
+          "name": "Automações e Inteligência Artificial",
+          "serviceType": "Automações e soluções com inteligência artificial",
+          "description": "Integrações e automações para reduzir tarefas repetitivas e apoiar a eficiência operacional.",
+          "provider": {"@id": "https://www.bjmpsolucoes.com.br/#organization"},
+          "areaServed": {"@type": "Country", "name": "Brasil"},
+          "url": "https://www.bjmpsolucoes.com.br/servicos/#automacoes-ia"
+        }
+      ]
     }
     </script>
 
@@ -352,10 +423,10 @@
             >
 
                 <a href="#inicio">Início</a>
-                <a href="#servicos">Serviços</a>
+                <a href="/servicos/">Serviços</a>
                 <a href="#projetos">Projetos</a>
-                <a href="/sobre/">Sobre</a>
-                <a href="/contato/">Contato</a>
+                <a href="https://www.bjmpsolucoes.com.br/sobre/">Sobre</a>
+                <a href="https://www.bjmpsolucoes.com.br/contato/">Contato</a>
 
             </nav>
 
@@ -1636,10 +1707,10 @@
             <div class="footer-links">
 
                 <a href="#inicio">Início</a>
-                <a href="#servicos">Serviços</a>
+                <a href="/servicos/">Serviços</a>
                 <a href="#projetos">Projetos</a>
-                <a href="/sobre/">Sobre</a>
-                <a href="/contato/">Contato</a>
+                <a href="https://www.bjmpsolucoes.com.br/sobre/">Sobre</a>
+                <a href="https://www.bjmpsolucoes.com.br/contato/">Contato</a>
 
             </div>
 
@@ -1700,6 +1771,7 @@
     </a>
 
 
+    <script src="/js/webmcp.js" defer></script>
     <script src="js/script.js"></script>
 
 </body>

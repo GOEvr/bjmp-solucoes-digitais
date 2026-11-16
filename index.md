@@ -1,65 +1,44 @@
 # BJMP Soluções Digitais
 
+> Desenvolvimento remoto de sites, landing pages, sistemas web, automações e soluções digitais com inteligência artificial para empresas e profissionais em todo o Brasil.
+
 ## Criação de sites e sistemas sob medida
 
-A BJMP Soluções Digitais desenvolve sites profissionais, landing pages e sistemas web sob medida para empresas de todo o Brasil.
-
-Criamos soluções responsivas e funcionais, alinhadas aos objetivos de cada negócio.
-
-**Serviços principais:** Landing Pages, Sites Institucionais, Sistemas Web, Automações e Inteligência Artificial.
+A BJMP Soluções Digitais desenvolve sites profissionais, landing pages e sistemas web sob medida para empresas de todo o Brasil. As soluções são planejadas conforme os objetivos e as necessidades de cada projeto.
 
 ## Serviços
 
-### Landing Pages
+- [Landing Pages](https://www.bjmpsolucoes.com.br/servicos/#landing-pages): páginas estratégicas para apresentar produtos, serviços e campanhas.
+- [Sites Institucionais](https://www.bjmpsolucoes.com.br/servicos/#sites-institucionais): presença digital profissional, responsiva e alinhada à identidade da empresa.
+- [Sistemas Web](https://www.bjmpsolucoes.com.br/servicos/#sistemas-web): sistemas personalizados para organizar processos, informações e operações.
+- [Automações e Inteligência Artificial](https://www.bjmpsolucoes.com.br/servicos/#automacoes-ia): integrações e automações para reduzir tarefas repetitivas e apoiar a eficiência.
 
-Páginas estratégicas desenvolvidas para apresentar produtos, serviços e gerar oportunidades.
-
-### Sites Institucionais
-
-Presença digital profissional, responsiva e alinhada à identidade da empresa.
-
-### Sistemas Web
-
-Sistemas personalizados para organizar processos, informações e operações.
-
-### Automações e Inteligência Artificial
-
-Integrações, automações e inteligência artificial para reduzir tarefas repetitivas e aumentar a eficiência.
+Detalhes: [Página de serviços da BJMP](https://www.bjmpsolucoes.com.br/servicos/).
 
 ## Projetos
 
 ### NeuroCombat Academy
-
 Plataforma digital para apresentação de cursos e soluções especializadas.
 
 ### Pré-Laudo de Aptidão Técnica
-
 Solução digital especializada para organização de informações técnicas.
 
 ### Naty Psy
-
 Presença digital personalizada para atendimento psicológico presencial e online.
 
 ### Clássicos VR - Placa Preta
-
 Plataforma digital para apresentação de certificação de veículos clássicos.
 
 ### Thaty Personalizados
-
 Experiência digital para apresentação de papelaria personalizada e kits para festas.
 
 ## Sobre a BJMP
 
 A BJMP Soluções Digitais desenvolve soluções digitais personalizadas para pessoas, empresas e projetos que precisam transformar ideias em ferramentas funcionais.
 
-Nosso trabalho combina desenvolvimento, automação, inteligência artificial, design e análise de processos.
+O trabalho combina desenvolvimento, automação, inteligência artificial, design e análise de processos. A empresa atua remotamente e atende projetos em todo o Brasil.
 
-- Soluções personalizadas
-- Desenvolvimento responsivo
-- Automação de processos
-- Integração com inteligência artificial
-
-Conheça a empresa: https://www.bjmpsolucoes.com.br/sobre/
+Conheça a empresa: [Sobre a BJMP](https://www.bjmpsolucoes.com.br/sobre/).
 
 ## Metodologia
 
@@ -76,18 +55,15 @@ HTML5, CSS3, JavaScript, PHP, Python, Firebase, Google Apps Script, GitHub, Clou
 
 ## Contato
 
-A BJMP atende projetos remotamente em todo o Brasil.
-
 - E-mail: contato@bjmpsolucoes.com.br
-- WhatsApp: https://wa.me/5524999599347
-- Página de contato: https://www.bjmpsolucoes.com.br/contato/
+- [WhatsApp](https://wa.me/5524999599347)
+- [Página de contato](https://www.bjmpsolucoes.com.br/contato/)
 
-## Links
+## Links úteis
 
-- Site: https://www.bjmpsolucoes.com.br/
-- Sobre: https://www.bjmpsolucoes.com.br/sobre/
-- Contato: https://www.bjmpsolucoes.com.br/contato/
-- Serviços: https://www.bjmpsolucoes.com.br/#servicos
-- Projetos: https://www.bjmpsolucoes.com.br/#projetos
-- Sitemap: https://www.bjmpsolucoes.com.br/sitemap.xml
-- llms.txt: https://www.bjmpsolucoes.com.br/llms.txt
+- [Página inicial](https://www.bjmpsolucoes.com.br/)
+- [Serviços](https://www.bjmpsolucoes.com.br/servicos/)
+- [Sobre](https://www.bjmpsolucoes.com.br/sobre/)
+- [Contato](https://www.bjmpsolucoes.com.br/contato/)
+- [Sitemap](https://www.bjmpsolucoes.com.br/sitemap.xml)
+- [llms.txt](https://www.bjmpsolucoes.com.br/llms.txt)
